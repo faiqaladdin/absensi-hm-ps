@@ -448,10 +448,11 @@
       </div>
 
       <p class="error-text" id="errForm">Mohon lengkapi semua data dan ambil foto terlebih dahulu.</p>
+      <p id="kirimStatus" style="font-size:13px; font-weight:700; margin-top:10px; display:none;"></p>
 
       <div class="row-btns">
         <button type="button" class="btn-secondary" id="btnBackInfo">Kembali</button>
-        <button type="submit" class="btn-submit">Kirim Kehadiran</button>
+        <button type="submit" class="btn-submit" id="btnKirim">Kirim Kehadiran</button>
       </div>
     </form>
   </section>
@@ -658,7 +659,10 @@ function stopKamera(){
   }
 }
 
-/* ===================== SUBMIT FORM ===================== */
+/* ===================== KIRIM KE GOOGLE SHEETS (GOOGLE APPS SCRIPT) ===================== */
+// GANTI TULISAN DI BAWAH INI DENGAN URL GOOGLE APPS SCRIPT KAMU!
+const scriptURL = 'PASTE_URL_GOOGLE_APPS_SCRIPT_DI_SINI';
+
 document.getElementById("absensiForm").addEventListener("submit", function(e){
   e.preventDefault();
 
@@ -674,9 +678,12 @@ document.getElementById("absensiForm").addEventListener("submit", function(e){
   const status = document.getElementById("status").value;
   const foto = document.getElementById("fotoData").value;
   const err = document.getElementById("errForm");
+  const kirimStatus = document.getElementById("kirimStatus");
+  const btnKirim = document.getElementById("btnKirim");
 
   if(!dept || !nama || !status || !foto){
     err.style.display = 'block';
+    kirimStatus.style.display = 'none';
     return;
   }
   err.style.display = 'none';
@@ -685,20 +692,52 @@ document.getElementById("absensiForm").addEventListener("submit", function(e){
     weekday:'long', year:'numeric', month:'long', day:'numeric'
   });
 
-  document.getElementById('summaryBox').innerHTML = `
-    <b>Tanggal:</b> ${tanggalFormatted}<br>
-    <b>Kegiatan:</b> ${jenisKegiatan}<br>
-    <b>Departemen:</b> ${dept}<br>
-    <b>Nama:</b> ${nama}<br>
-    <b>Status:</b> ${status}
-  `;
-  document.getElementById('summaryPhoto').src = foto;
+  // Tampilkan status loading (orange) sambil data dikirim
+  kirimStatus.style.display = 'block';
+  kirimStatus.style.color = '#f39c12';
+  kirimStatus.textContent = `Sedang mengirim data absensi ${nama}... Mohon tunggu.`;
+  btnKirim.disabled = true;
+  btnKirim.textContent = 'Mengirim...';
 
-  // Di sini data siap dikirim ke Google Sheets API / database lain
-  console.log("Data siap dikirim:", { tanggal, jenisKegiatan, dept, nama, status, fotoPreview: foto.substring(0,50)+"..." });
+  fetch(scriptURL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tanggal: tanggal,
+      kegiatan: jenisKegiatan,
+      departemen: dept,
+      nama: nama,
+      status: status,
+      foto: foto
+    })
+  })
+  .then(response => {
+    kirimStatus.style.color = '#27ae60';
+    kirimStatus.textContent = `Absensi ${nama} (${dept}) berhasil dikirim ke Google Sheets!`;
 
-  stopKamera();
-  goTo('page-success');
+    // Siapkan ringkasan untuk halaman sukses
+    document.getElementById('summaryBox').innerHTML = `
+      <b>Tanggal:</b> ${tanggalFormatted}<br>
+      <b>Kegiatan:</b> ${jenisKegiatan}<br>
+      <b>Departemen:</b> ${dept}<br>
+      <b>Nama:</b> ${nama}<br>
+      <b>Status:</b> ${status}
+    `;
+    document.getElementById('summaryPhoto').src = foto;
+
+    stopKamera();
+    btnKirim.disabled = false;
+    btnKirim.textContent = 'Kirim Kehadiran';
+    goTo('page-success');
+  })
+  .catch(error => {
+    kirimStatus.style.color = '#e74c3c';
+    kirimStatus.textContent = `Gagal mengirim absensi! Periksa koneksi internet, lalu coba lagi.`;
+    btnKirim.disabled = false;
+    btnKirim.textContent = 'Kirim Kehadiran';
+    console.error('Error!', error.message);
+  });
 });
 
 /* ===================== RESET UNTUK PENGISIAN BARU ===================== */
