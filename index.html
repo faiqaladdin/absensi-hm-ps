@@ -1,308 +1,731 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absensi HMPS Pendidikan Matematika</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px 0;
-        }
-        .form-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
-        }
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 22px;
-        }
-        label {
-            font-weight: bold;
-            color: #34495e;
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-        select, button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
-        select:focus {
-            border-color: #2ecc71;
-            outline: none;
-        }
-        
-        /* Gaya khusus untuk area kamera */
-        .camera-section {
-            margin-top: 15px;
-            text-align: center;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px dashed #ccc;
-        }
-        video {
-            width: 100%;
-            border-radius: 5px;
-            background-color: #000;
-            display: block;
-        }
-        #hasilFoto {
-            width: 100%;
-            border-radius: 5px;
-            display: none; /* Sembunyikan sebelum foto diambil */
-        }
-        .btn-kamera {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            padding: 10px;
-            transition: background 0.3s;
-        }
-        .btn-kamera:hover {
-            background-color: #2980b9;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi Kabinet Adhikara — HM-PS Pendidikan Matematika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#0B3D2E;
+    --green-deep:#12513B;
+    --green-mid:#1F7A54;
+    --green-fresh:#52B788;
+    --green-pale:#D8F0E3;
+    --bg:#F4FBF7;
+    --card:#FFFFFF;
+    --ink:#0F2A20;
+    --ink-soft:#4B6358;
+    --gold:#C99A46;
+    --danger:#D9534F;
+    --radius:18px;
+    --shadow: 0 20px 45px -20px rgba(11,61,46,0.35);
+  }
 
-        .btn-submit {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 25px;
-            transition: background 0.3s;
-        }
-        .btn-submit:hover {
-            background-color: #27ae60;
-        }
-        #statusMessage {
-            text-align: center;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-    </style>
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 12% -10%, rgba(82,183,136,0.25), transparent 45%),
+      radial-gradient(circle at 100% 10%, rgba(201,154,70,0.12), transparent 40%),
+      var(--bg);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:28px 16px 110px;
+  }
+
+  h1,h2,h3{
+    font-family:'Poppins', sans-serif;
+    margin:0;
+  }
+
+  .app{
+    width:100%;
+    max-width:480px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  /* ---------- STEP INDICATOR (leaf motif) ---------- */
+  .steps{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:4px 0 2px;
+  }
+  .leaf{
+    width:16px;
+    height:16px;
+    border-radius:0 60% 0 60%;
+    background:var(--green-pale);
+    border:1.5px solid var(--green-fresh);
+    transition:all .35s ease;
+  }
+  .leaf.active{
+    background:var(--green-fresh);
+    box-shadow:0 0 0 5px rgba(82,183,136,0.18);
+    transform:scale(1.15);
+  }
+  .leaf.done{
+    background:var(--green-mid);
+    border-color:var(--green-mid);
+  }
+  .step-line{
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:center;
+    font-weight:600;
+    letter-spacing:.02em;
+  }
+
+  /* ---------- CARD / PAGES ---------- */
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:32px 26px;
+    display:none;
+    flex-direction:column;
+    gap:6px;
+    animation:rise .45s ease;
+  }
+  .card.active{display:flex;}
+
+  @keyframes rise{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* ---------- COVER ---------- */
+  #page-cover{
+    align-items:center;
+    text-align:center;
+    padding:56px 28px 46px;
+    background:
+      linear-gradient(160deg, var(--forest) 0%, var(--green-deep) 55%, var(--green-mid) 100%);
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+    min-height:520px;
+    justify-content:center;
+  }
+  #page-cover::before{
+    content:"";
+    position:absolute;
+    width:340px; height:340px;
+    border-radius:0 62% 0 62%;
+    border:1.5px solid rgba(255,255,255,0.14);
+    top:-90px; right:-110px;
+  }
+  #page-cover::after{
+    content:"";
+    position:absolute;
+    width:220px; height:220px;
+    border-radius:62% 0 62% 0;
+    border:1.5px solid rgba(255,255,255,0.1);
+    bottom:-70px; left:-70px;
+  }
+  .cover-eyebrow{
+    font-size:13px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--green-pale);
+    font-weight:600;
+    z-index:1;
+  }
+  .cover-title{
+    font-size:30px;
+    font-weight:800;
+    margin-top:14px;
+    line-height:1.28;
+    z-index:1;
+  }
+  .cover-title span{color:var(--gold);}
+  .cover-sub{
+    margin-top:10px;
+    font-size:15.5px;
+    font-weight:600;
+    color:rgba(255,255,255,0.88);
+    z-index:1;
+  }
+  .cover-tagline{
+    margin-top:22px;
+    font-size:13px;
+    color:var(--green-pale);
+    font-style:italic;
+    z-index:1;
+  }
+  .btn-start{
+    margin-top:34px;
+    z-index:1;
+    background:var(--gold);
+    color:var(--forest);
+    border:none;
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    padding:14px 34px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 10px 24px -8px rgba(201,154,70,0.6);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-start:hover{transform:translateY(-2px); box-shadow:0 14px 28px -8px rgba(201,154,70,0.7);}
+
+  /* ---------- FORM ELEMENTS ---------- */
+  .page-title{
+    font-size:20px;
+    font-weight:700;
+    color:var(--forest);
+  }
+  .page-desc{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+    margin-bottom:18px;
+  }
+  label{
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--green-deep);
+    display:block;
+    margin-top:16px;
+    margin-bottom:6px;
+    letter-spacing:.01em;
+  }
+  select, input[type="date"], input[type="text"]{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid #DCEDE3;
+    background:#FBFEFC;
+    border-radius:12px;
+    font-size:14.5px;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    color:var(--ink);
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  select:focus, input:focus{
+    outline:none;
+    border-color:var(--green-fresh);
+    box-shadow:0 0 0 4px rgba(82,183,136,0.15);
+  }
+  select:disabled{color:#9CB3A8; background:#F3F7F4;}
+
+  .row-btns{
+    display:flex;
+    gap:10px;
+    margin-top:28px;
+  }
+  button{font-family:'Poppins', sans-serif; cursor:pointer;}
+  .btn-primary, .btn-secondary, .btn-submit{
+    flex:1;
+    border:none;
+    padding:13px 10px;
+    border-radius:12px;
+    font-weight:700;
+    font-size:14.5px;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .btn-primary, .btn-submit{
+    background:var(--green-mid);
+    color:#fff;
+  }
+  .btn-primary:hover, .btn-submit:hover{background:var(--forest); transform:translateY(-1px);}
+  .btn-secondary{
+    background:#EEF6F1;
+    color:var(--green-deep);
+  }
+  .btn-secondary:hover{background:#E1EEE7;}
+
+  /* ---------- CAMERA ---------- */
+  .camera-box{
+    margin-top:10px;
+    background:linear-gradient(180deg,#F3FAF6,#EAF6EE);
+    border:1.5px dashed #A9D9BF;
+    border-radius:14px;
+    padding:14px;
+    text-align:center;
+  }
+  .camera-hint{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  #kamera, #hasilFoto{
+    width:100%;
+    border-radius:10px;
+    background:#0d241b;
+    display:none;
+  }
+  .btn-cam{
+    width:100%;
+    margin-top:10px;
+    background:var(--forest);
+    color:#fff;
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    font-weight:700;
+    font-size:14px;
+  }
+  .btn-cam:hover{background:#092c20;}
+  .btn-cam.retake{background:var(--danger);}
+  .cam-status{
+    font-size:12px;
+    color:var(--green-deep);
+    font-weight:600;
+    margin-top:8px;
+    display:none;
+  }
+
+  .error-text{
+    color:var(--danger);
+    font-size:12.5px;
+    font-weight:600;
+    margin-top:10px;
+    display:none;
+  }
+
+  /* ---------- SUCCESS PAGE ---------- */
+  #page-success{
+    text-align:center;
+    align-items:center;
+    padding:44px 26px;
+  }
+  .success-badge{
+    width:64px; height:64px;
+    border-radius:0 55% 0 55%;
+    background:var(--green-pale);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:16px;
+  }
+  .success-badge svg{width:30px; height:30px;}
+  .summary{
+    width:100%;
+    text-align:left;
+    background:#F7FCF9;
+    border:1px solid #E1F1E7;
+    border-radius:14px;
+    padding:16px 18px;
+    margin-top:18px;
+    font-size:13.5px;
+    line-height:1.9;
+  }
+  .summary b{color:var(--forest);}
+  .summary-photo{
+    width:100%;
+    border-radius:10px;
+    margin-top:12px;
+  }
+
+  /* ---------- WATERMARK FOOTER ---------- */
+  .watermark{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    background:linear-gradient(180deg, rgba(11,61,46,0) 0%, rgba(11,61,46,0.97) 32%);
+    color:rgba(255,255,255,0.92);
+    text-align:center;
+    padding:22px 16px 12px;
+    font-size:11px;
+    line-height:1.75;
+    letter-spacing:.02em;
+    pointer-events:none;
+    z-index:50;
+  }
+  .watermark strong{
+    color:var(--green-pale);
+    font-weight:700;
+    letter-spacing:.05em;
+  }
+  .watermark .tagline{
+    color:var(--gold);
+    font-style:italic;
+  }
+
+  @media (max-width:400px){
+    .card{padding:26px 18px;}
+    .cover-title{font-size:25px;}
+  }
+</style>
 </head>
 <body>
 
-<div class="form-container">
-    <h2>Absensi HMPS Pemat 2026</h2>
+<div class="app">
+
+  <div class="steps" id="stepsIndicator">
+    <span class="leaf" data-step="1"></span>
+    <span class="leaf" data-step="2"></span>
+    <span class="leaf" data-step="3"></span>
+  </div>
+
+  <!-- ============ COVER ============ -->
+  <section class="card active" id="page-cover">
+    <div class="cover-eyebrow">Sistem Absensi Digital</div>
+    <h1 class="cover-title">Absensi Kabinet <span>Adhikara</span></h1>
+    <div class="cover-sub">HM-PS Pendidikan Matematika</div>
+    <div class="cover-tagline">"Σ Bertumbuh bersama, SIGMA berkarya Σ"</div>
+    <button class="btn-start" id="btnMulai">Mulai Absensi →</button>
+  </section>
+
+  <!-- ============ PAGE 1: INFO KEGIATAN ============ -->
+  <section class="card" id="page-info">
+    <div class="page-title">Informasi Kegiatan</div>
+    <div class="page-desc">Lengkapi tanggal dan jenis kegiatan sebelum mengisi kehadiran.</div>
+
+    <label for="tanggal">Tanggal Kegiatan</label>
+    <input type="date" id="tanggal" required>
+
+    <label for="jenisKegiatan">Jenis Kegiatan</label>
+    <select id="jenisKegiatan" required onchange="toggleKegiatanLain()">
+      <option value="">-- Pilih Jenis Kegiatan --</option>
+      <option value="Rapat Bulanan">Rapat Bulanan</option>
+      <option value="Acara HM-PS">Acara HM-PS</option>
+      <option value="Rapat Departemen">Rapat Departemen</option>
+      <option value="Rapat Kabinet">Rapat Kabinet</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
+
+    <div id="wrapKegiatanLain" style="display:none;">
+      <label for="kegiatanLain">Sebutkan Kegiatan</label>
+      <input type="text" id="kegiatanLain" placeholder="Contoh: Diskusi Panel Pendidikan">
+    </div>
+
+    <p class="error-text" id="errInfo">Mohon lengkapi tanggal dan jenis kegiatan.</p>
+
+    <div class="row-btns">
+      <button type="button" class="btn-secondary" id="btnBackCover">Kembali</button>
+      <button type="button" class="btn-primary" id="btnNextInfo">Lanjut →</button>
+    </div>
+  </section>
+
+  <!-- ============ PAGE 2: DATA KEHADIRAN ============ -->
+  <section class="card" id="page-form">
+    <div class="page-title">Data Kehadiran</div>
+    <div class="page-desc">Isi data diri dan ambil foto sebagai bukti kehadiran.</div>
+
     <form id="absensiForm">
-        
-        <label for="departemen">Pilih Jabatan / Departemen:</label>
-        <select id="departemen" onchange="updateNama()" required>
-            <option value="">-- Pilih Departemen --</option>
-            <option value="BPH">Badan Pengurus Harian (BPH)</option>
-            <option value="Pendidikan dan Intelektual">Departemen Pendidikan dan Intelektual</option>
-            <option value="Kajian Aksi Strategi">Departemen Kajian Aksi Strategi</option>
-            <option value="Minat dan Bakat">Departemen Minat dan Bakat</option>
-            <option value="Media dan Informasi">Departemen Media dan Informasi</option>
-            <option value="Ecopreneurship">Departemen Ecopreneurship</option>
-        </select>
+      <label for="departemen">Pilih Jabatan / Departemen</label>
+      <select id="departemen" onchange="updateNama()" required>
+        <option value="">-- Pilih Departemen --</option>
+        <option value="BPH">Badan Pengurus Harian (BPH)</option>
+        <option value="Pendidikan dan Intelektual">Departemen Pendidikan dan Intelektual</option>
+        <option value="Kajian Aksi Strategi">Departemen Kajian Aksi Strategi</option>
+        <option value="Minat dan Bakat">Departemen Minat dan Bakat</option>
+        <option value="Media dan Informasi">Departemen Media dan Informasi</option>
+        <option value="Ecopreneurship">Departemen Ecopreneurship</option>
+      </select>
 
-        <label for="nama">Pilih Nama Lengkap:</label>
-        <select id="nama" required disabled>
-            <option value="">-- Pilih Departemen Terlebih Dahulu --</option>
-        </select>
+      <label for="nama">Pilih Nama Lengkap</label>
+      <select id="nama" required disabled>
+        <option value="">-- Pilih Departemen Terlebih Dahulu --</option>
+      </select>
 
-        <label for="status">Status Kehadiran:</label>
-        <select id="status" required>
-            <option value="Hadir">Hadir</option>
-            <option value="Izin">Izin</option>
-            <option value="Sakit">Sakit</option>
-        </select>
+      <label for="status">Status Kehadiran</label>
+      <select id="status" required>
+        <option value="Hadir">Hadir</option>
+        <option value="Izin">Izin</option>
+        <option value="Sakit">Sakit</option>
+      </select>
 
-        <div class="camera-section">
-            <label>Bukti Kehadiran (Kamera Depan):</label>
-            <video id="kamera" autoplay playsinline></video>
-            <img id="hasilFoto" alt="Hasil Tangkapan">
-            <canvas id="canvas" style="display: none;"></canvas>
-            <button type="button" id="btnAmbilFoto" class="btn-kamera">Ambil Foto</button>
-            <input type="hidden" id="fotoData" required> </div>
+      <label>Bukti Kehadiran (Foto Wajib)</label>
+      <div class="camera-box">
+        <div class="camera-hint">Gunakan kamera depan untuk mengambil foto wajah sebagai bukti kehadiran.</div>
+        <button type="button" class="btn-cam" id="btnAktifkanKamera">📷 Aktifkan Kamera</button>
+        <video id="kamera" autoplay playsinline muted></video>
+        <img id="hasilFoto" alt="Hasil Tangkapan">
+        <canvas id="canvas" style="display:none;"></canvas>
+        <button type="button" class="btn-cam" id="btnAmbilFoto" style="display:none;">Ambil Foto</button>
+        <div class="cam-status" id="camStatus"></div>
+        <input type="hidden" id="fotoData" required>
+      </div>
 
+      <p class="error-text" id="errForm">Mohon lengkapi semua data dan ambil foto terlebih dahulu.</p>
+
+      <div class="row-btns">
+        <button type="button" class="btn-secondary" id="btnBackInfo">Kembali</button>
         <button type="submit" class="btn-submit">Kirim Kehadiran</button>
+      </div>
     </form>
-    <p id="statusMessage"></p>
+  </section>
+
+  <!-- ============ SUCCESS ============ -->
+  <section class="card" id="page-success">
+    <div class="success-badge">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#1F7A54" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h2 class="page-title">Absensi Berhasil Dicatat!</h2>
+    <div class="page-desc">Terima kasih, kehadiranmu sudah tersimpan.</div>
+
+    <div class="summary" id="summaryBox"></div>
+    <img id="summaryPhoto" class="summary-photo" alt="Bukti Foto">
+
+    <div class="row-btns" style="margin-top:22px;">
+      <button type="button" class="btn-primary" id="btnReset" style="flex:1;">Isi Absensi Baru</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="watermark">
+  #kabinetadhikara<br>
+  <span class="tagline">Σ Bertumbuh bersama, SIGMA berkarya Σ</span><br>
+  <strong>Official Accounts of HM-PS PMAT UIN SUKA</strong><br>
+  ⌕ Instagram: @hmps_uinsukapmat &nbsp;|&nbsp; ⌕ E-mail: uinsukapmat@gmail.com<br>
+  ⌕ YouTube: Pmat Uinsuka &nbsp;|&nbsp; ⌕ TikTok: pmatuinsuka<br>
+  ⌕ Web: hmpspmat.uin-suka.ac.id
 </div>
 
 <script>
-// --- LOGIKA DATA NAMA ---
-const dataPengurus = {
-    "BPH": [
-        "Eliza Cahya Nur Fitriani",
-        "Nabila Putri Fanisha",
-        "Nur'aini Zakiah",
-        "Dinda Tri Hapsari",
-        "Juwairiyah Miftakhul Jannah",
-        "Cinta Syaifa Azzahra"
-    ],
-    "Pendidikan dan Intelektual": [
-        "Firdasari Andarayogi",
-        "Nita Maharani",
-        "Khoirun Nisa' Cipta Tsany",
-        "Nency Surya Andini",
-        "Elia Mu'shoda",
-        "Azizun Niswah",
-        "Meylani Seviasti",
-        "Ahmad Muzaki Zulkarnain"
-    ],
-    "Kajian Aksi Strategi": [
-        "Nuryatul Salwa Qolbiyah",
-        "Tasya Khairunnisa",
-        "Ari Wicaksono",
-        "Novi Lilis Widiayanti",
-        "Miftahul Fathma Fitriani",
-        "Hafidz Azka Ramadhan",
-        "Hasan Abdul Syukur"
-    ],
-    "Minat dan Bakat": [
-        "Abdullah Nashif Nashiruddin",
-        "Faizal Anam Nurul Kawakib",
-        "Nauval Adhya Angri",
-        "Dima Iqbal Firdaus",
-        "Sasikirana Sekarini",
-        "Mohamad Ali Ramadhan",
-        "Fharid Fadillah"
-    ],
-    "Media dan Informasi": [
-        "Nisrina Ambar Ulayya Harun",
-        "Nisa Hidayati",
-        "Lubna Alifatul Mardhiyah",
-        "M. Faiq Difa Al Din",
-        "Ibnaty Rafifahasyla",
-        "Endah Novalien Renata"
-    ],
-    "Ecopreneurship": [
-        "Zaira Anjani Rahmat Dina",
-        "Muhammad Rizki",
-        "Assa Aulya Qodrati",
-        "Roydhatul Intan Widuri",
-        "Salsabila Cahyaningtyas",
-        "Zahra Tri Indriyani",
-        "Muhammad Faiq Akbar Rhamzani"
-    ]
-};
+/* ===================== NAVIGASI ANTAR HALAMAN ===================== */
+const pages = ["page-cover","page-info","page-form","page-success"];
+const leaves = document.querySelectorAll('.leaf');
 
-function updateNama() {
-    const departemenSelect = document.getElementById("departemen");
-    const namaSelect = document.getElementById("nama");
-    const selectedDept = departemenSelect.value;
+function goTo(pageId){
+  pages.forEach(p => document.getElementById(p).classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
 
-    namaSelect.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
-
-    if (selectedDept && dataPengurus[selectedDept]) {
-        namaSelect.disabled = false;
-        dataPengurus[selectedDept].forEach(nama => {
-            const option = document.createElement("option");
-            option.value = nama;
-            option.textContent = nama;
-            namaSelect.appendChild(option);
-        });
-    } else {
-        namaSelect.disabled = true;
-        namaSelect.innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
-    }
+  // update step indicator (hide on cover & success, show for info/form)
+  const stepMap = {"page-cover":0, "page-info":1, "page-form":2, "page-success":3};
+  const current = stepMap[pageId];
+  document.getElementById('stepsIndicator').style.visibility = (pageId === 'page-cover') ? 'hidden' : 'visible';
+  leaves.forEach(leaf=>{
+    const s = parseInt(leaf.dataset.step);
+    leaf.classList.remove('active','done');
+    if(s < current) leaf.classList.add('done');
+    if(s === current) leaf.classList.add('active');
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// --- LOGIKA KAMERA ---
+document.getElementById('btnMulai').addEventListener('click', ()=>{
+  // default tanggal ke hari ini
+  const t = document.getElementById('tanggal');
+  if(!t.value){
+    const today = new Date();
+    const iso = today.toISOString().split('T')[0];
+    t.value = iso;
+  }
+  goTo('page-info');
+});
+
+document.getElementById('btnBackCover').addEventListener('click', ()=> goTo('page-cover'));
+document.getElementById('btnBackInfo').addEventListener('click', ()=> goTo('page-info'));
+
+function toggleKegiatanLain(){
+  const val = document.getElementById('jenisKegiatan').value;
+  document.getElementById('wrapKegiatanLain').style.display = (val === 'Lainnya') ? 'block' : 'none';
+}
+
+document.getElementById('btnNextInfo').addEventListener('click', ()=>{
+  const tanggal = document.getElementById('tanggal').value;
+  const jenis = document.getElementById('jenisKegiatan').value;
+  const lain = document.getElementById('kegiatanLain').value;
+  const err = document.getElementById('errInfo');
+
+  if(!tanggal || !jenis || (jenis === 'Lainnya' && !lain.trim())){
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  goTo('page-form');
+});
+
+/* ===================== DATA NAMA PER DEPARTEMEN ===================== */
+const dataPengurus = {
+  "BPH": [
+    "Eliza Cahya Nur Fitriani","Nabila Putri Fanisha","Nur'aini Zakiah",
+    "Dinda Tri Hapsari","Juwairiyah Miftakhul Jannah","Cinta Syaifa Azzahra"
+  ],
+  "Pendidikan dan Intelektual": [
+    "Firdasari Andarayogi","Nita Maharani","Khoirun Nisa' Cipta Tsany",
+    "Nency Surya Andini","Elia Mu'shoda","Azizun Niswah",
+    "Meylani Seviasti","Ahmad Muzaki Zulkarnain"
+  ],
+  "Kajian Aksi Strategi": [
+    "Nuryatul Salwa Qolbiyah","Tasya Khairunnisa","Ari Wicaksono",
+    "Novi Lilis Widiayanti","Miftahul Fathma Fitriani","Hafidz Azka Ramadhan","Hasan Abdul Syukur"
+  ],
+  "Minat dan Bakat": [
+    "Abdullah Nashif Nashiruddin","Faizal Anam Nurul Kawakib","Nauval Adhya Angri",
+    "Dima Iqbal Firdaus","Sasikirana Sekarini","Mohamad Ali Ramadhan","Fharid Fadillah"
+  ],
+  "Media dan Informasi": [
+    "Nisrina Ambar Ulayya Harun","Nisa Hidayati","Lubna Alifatul Mardhiyah",
+    "M. Faiq Difa Al Din","Ibnaty Rafifahasyla","Endah Novalien Renata"
+  ],
+  "Ecopreneurship": [
+    "Zaira Anjani Rahmat Dina","Muhammad Rizki","Assa Aulya Qodrati",
+    "Roydhatul Intan Widuri","Salsabila Cahyaningtyas","Zahra Tri Indriyani","Muhammad Faiq Akbar Rhamzani"
+  ]
+};
+
+function updateNama(){
+  const departemenSelect = document.getElementById("departemen");
+  const namaSelect = document.getElementById("nama");
+  const selectedDept = departemenSelect.value;
+
+  namaSelect.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
+
+  if(selectedDept && dataPengurus[selectedDept]){
+    namaSelect.disabled = false;
+    dataPengurus[selectedDept].forEach(nama=>{
+      const option = document.createElement("option");
+      option.value = nama;
+      option.textContent = nama;
+      namaSelect.appendChild(option);
+    });
+  } else {
+    namaSelect.disabled = true;
+    namaSelect.innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
+  }
+}
+
+/* ===================== LOGIKA KAMERA (OPT-IN, DEPAN) ===================== */
 const video = document.getElementById('kamera');
 const canvas = document.getElementById('canvas');
 const hasilFoto = document.getElementById('hasilFoto');
+const btnAktifkanKamera = document.getElementById('btnAktifkanKamera');
 const btnAmbilFoto = document.getElementById('btnAmbilFoto');
 const fotoData = document.getElementById('fotoData');
-let stream;
+const camStatus = document.getElementById('camStatus');
+
+let stream = null;
 let isCaptured = false;
 
-// Fungsi untuk menyalakan kamera depan
-async function jalankanKamera() {
-    try {
-        // facingMode: "user" memaksa penggunaan kamera depan
-        stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: "user" }, 
-            audio: false 
-        });
-        video.srcObject = stream;
-    } catch (err) {
-        alert("Kamera tidak dapat diakses. Pastikan Anda memberikan izin kamera pada browser.");
-        console.error("Error Kamera: ", err);
-    }
-}
-
-// Jalankan kamera saat halaman web dibuka
-window.addEventListener('load', jalankanKamera);
-
-// Fungsi saat tombol Ambil Foto ditekan
-btnAmbilFoto.addEventListener('click', () => {
-    if (!isCaptured) {
-        // Ambil gambar dari video ke canvas
-        const context = canvas.getContext('2d');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Ubah gambar jadi base64 (format teks) untuk disimpan
-        const imageData = canvas.toDataURL('image/png');
-        hasilFoto.src = imageData;
-        fotoData.value = imageData; // Simpan di input hidden untuk dikirim ke database
-        
-        // Tampilkan hasil foto, sembunyikan live video
-        hasilFoto.style.display = 'block';
-        video.style.display = 'none';
-        btnAmbilFoto.textContent = 'Foto Ulang';
-        btnAmbilFoto.style.backgroundColor = '#e74c3c'; // Ubah warna tombol jadi merah
-        isCaptured = true;
-    } else {
-        // Mode foto ulang
-        hasilFoto.style.display = 'none';
-        video.style.display = 'block';
-        fotoData.value = ''; // Kosongkan data foto sebelumnya
-        btnAmbilFoto.textContent = 'Ambil Foto';
-        btnAmbilFoto.style.backgroundColor = '#3498db'; // Kembalikan warna tombol
-        isCaptured = false;
-    }
+btnAktifkanKamera.addEventListener('click', async ()=>{
+  if(stream){
+    // kamera sudah aktif, jangan minta izin dua kali
+    return;
+  }
+  camStatus.style.display = 'block';
+  camStatus.textContent = 'Meminta izin kamera...';
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user" },
+      audio: false
+    });
+    video.srcObject = stream;
+    video.style.display = 'block';
+    btnAktifkanKamera.style.display = 'none';
+    btnAmbilFoto.style.display = 'block';
+    camStatus.textContent = 'Kamera depan aktif. Posisikan wajah Anda, lalu tekan "Ambil Foto".';
+  }catch(err){
+    camStatus.textContent = 'Kamera tidak dapat diakses. Pastikan izin kamera sudah diberikan pada browser.';
+    console.error("Error Kamera: ", err);
+  }
 });
 
-// --- LOGIKA SUBMIT FORM ---
-document.getElementById("absensiForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const nama = document.getElementById("nama").value;
-    const dept = document.getElementById("departemen").value;
-    const status = document.getElementById("status").value;
-    const foto = document.getElementById("fotoData").value;
-    const msg = document.getElementById("statusMessage");
+btnAmbilFoto.addEventListener('click', ()=>{
+  if(!isCaptured){
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth || 480;
+    canvas.height = video.videoHeight || 360;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Validasi apakah foto sudah diambil
-    if (!foto) {
-        msg.style.color = "#e74c3c"; // Warna merah error
-        msg.textContent = "Mohon ambil foto bukti kehadiran terlebih dahulu!";
-        return; // Hentikan proses jika belum foto
-    }
+    const imageData = canvas.toDataURL('image/png');
+    hasilFoto.src = imageData;
+    fotoData.value = imageData;
 
-    msg.style.color = "#27ae60"; // Warna hijau sukses
-    msg.textContent = `Absensi ${nama} (${dept}) dengan status [${status}] berhasil dicatat!`;
-    
-    // Di sini data siap dikirim (misal pakai fetch ke Google Sheets API atau database lain)
-    console.log("Data foto (Base64) siap dikirim:", foto.substring(0, 50) + "..."); 
+    hasilFoto.style.display = 'block';
+    video.style.display = 'none';
+    btnAmbilFoto.textContent = 'Foto Ulang';
+    btnAmbilFoto.classList.add('retake');
+    camStatus.textContent = 'Foto berhasil diambil. Tekan "Foto Ulang" jika ingin mengambil ulang.';
+    isCaptured = true;
+  } else {
+    hasilFoto.style.display = 'none';
+    video.style.display = 'block';
+    fotoData.value = '';
+    btnAmbilFoto.textContent = 'Ambil Foto';
+    btnAmbilFoto.classList.remove('retake');
+    camStatus.textContent = 'Posisikan wajah Anda, lalu tekan "Ambil Foto".';
+    isCaptured = false;
+  }
+});
+
+function stopKamera(){
+  if(stream){
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+}
+
+/* ===================== SUBMIT FORM ===================== */
+document.getElementById("absensiForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const tanggal = document.getElementById("tanggal").value;
+  let jenisKegiatan = document.getElementById("jenisKegiatan").value;
+  const kegiatanLain = document.getElementById("kegiatanLain").value;
+  if(jenisKegiatan === 'Lainnya' && kegiatanLain.trim()){
+    jenisKegiatan = kegiatanLain.trim();
+  }
+
+  const dept = document.getElementById("departemen").value;
+  const nama = document.getElementById("nama").value;
+  const status = document.getElementById("status").value;
+  const foto = document.getElementById("fotoData").value;
+  const err = document.getElementById("errForm");
+
+  if(!dept || !nama || !status || !foto){
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+
+  const tanggalFormatted = new Date(tanggal + 'T00:00:00').toLocaleDateString('id-ID', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+
+  document.getElementById('summaryBox').innerHTML = `
+    <b>Tanggal:</b> ${tanggalFormatted}<br>
+    <b>Kegiatan:</b> ${jenisKegiatan}<br>
+    <b>Departemen:</b> ${dept}<br>
+    <b>Nama:</b> ${nama}<br>
+    <b>Status:</b> ${status}
+  `;
+  document.getElementById('summaryPhoto').src = foto;
+
+  // Di sini data siap dikirim ke Google Sheets API / database lain
+  console.log("Data siap dikirim:", { tanggal, jenisKegiatan, dept, nama, status, fotoPreview: foto.substring(0,50)+"..." });
+
+  stopKamera();
+  goTo('page-success');
+});
+
+/* ===================== RESET UNTUK PENGISIAN BARU ===================== */
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  document.getElementById('absensiForm').reset();
+  document.getElementById('departemen').dispatchEvent(new Event('change'));
+  document.getElementById('nama').innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
+  document.getElementById('nama').disabled = true;
+
+  hasilFoto.style.display = 'none';
+  hasilFoto.src = '';
+  video.style.display = 'none';
+  fotoData.value = '';
+  isCaptured = false;
+  btnAmbilFoto.textContent = 'Ambil Foto';
+  btnAmbilFoto.classList.remove('retake');
+  btnAmbilFoto.style.display = 'none';
+  btnAktifkanKamera.style.display = 'block';
+  camStatus.style.display = 'none';
+  camStatus.textContent = '';
+
+  document.getElementById('jenisKegiatan').value = '';
+  document.getElementById('kegiatanLain').value = '';
+  document.getElementById('wrapKegiatanLain').style.display = 'none';
+  document.getElementById('tanggal').value = '';
+
+  goTo('page-cover');
 });
 </script>
 
