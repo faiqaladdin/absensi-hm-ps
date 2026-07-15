@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi HMPS Pendidikan Matematika</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        label {
+            font-weight: bold;
+            color: #34495e;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        select:focus {
+            border-color: #2ecc71;
+            outline: none;
+        }
+        button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        #statusMessage {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Absensi HMPS Pemat 2026</h2>
+    <form id="absensiForm">
+        
+        <label for="departemen">Pilih Jabatan / Departemen:</label>
+        <select id="departemen" onchange="updateNama()" required>
+            <option value="">-- Pilih Departemen --</option>
+            <option value="BPH">Badan Pengurus Harian (BPH)</option>
+            <option value="Pendidikan dan Intelektual">Departemen Pendidikan dan Intelektual</option>
+            <option value="Kajian Aksi Strategi">Departemen Kajian Aksi Strategi</option>
+            <option value="Minat dan Bakat">Departemen Minat dan Bakat</option>
+            <option value="Media dan Informasi">Departemen Media dan Informasi</option>
+            <option value="Ecopreneurship">Departemen Ecopreneurship</option>
+        </select>
+
+        <label for="nama">Pilih Nama Lengkap:</label>
+        <select id="nama" required disabled>
+            <option value="">-- Pilih Departemen Terlebih Dahulu --</option>
+        </select>
+
+        <label for="status">Status Kehadiran:</label>
+        <select id="status" required>
+            <option value="Hadir">Hadir</option>
+            <option value="Izin">Izin</option>
+            <option value="Sakit">Sakit</option>
+        </select>
+
+        <button type="submit">Kirim Kehadiran</button>
+    </form>
+    <p id="statusMessage"></p>
+</div>
+
+<script>
+// Data nama pengurus berdasarkan struktur resmi HMPS PMAT 2026
+const dataPengurus = {
+    "BPH": [
+        "Eliza Cahya Nur Fitriani",
+        "Nabila Putri Fanisha",
+        "Nur'aini Zakiah",
+        "Dinda Tri Hapsari",
+        "Juwairiyah Miftakhul Jannah",
+        "Cinta Syaifa Azzahra"
+    ],
+    "Pendidikan dan Intelektual": [
+        "Firdasari Andarayogi",
+        "Nita Maharani",
+        "Khoirun Nisa' Cipta Tsany",
+        "Nency Surya Andini",
+        "Elia Mu'shoda",
+        "Azizun Niswah",
+        "Meylani Seviasti",
+        "Ahmad Muzaki Zulkarnain"
+    ],
+    "Kajian Aksi Strategi": [
+        "Nuryatul Salwa Qolbiyah",
+        "Tasya Khairunnisa",
+        "Ari Wicaksono",
+        "Novi Lilis Widiayanti",
+        "Miftahul Fathma Fitriani",
+        "Hafidz Azka Ramadhan",
+        "Hasan Abdul Syukur"
+    ],
+    "Minat dan Bakat": [
+        "Abdullah Nashif Nashiruddin",
+        "Faizal Anam Nurul Kawakib",
+        "Nauval Adhya Angri",
+        "Dima Iqbal Firdaus",
+        "Sasikirana Sekarini",
+        "Mohamad Ali Ramadhan",
+        "Fharid Fadillah"
+    ],
+    "Media dan Informasi": [
+        "Nisrina Ambar Ulayya Harun",
+        "Nisa Hidayati",
+        "Lubna Alifatul Mardhiyah",
+        "M. Faiq Difa Al Din",
+        "Ibnaty Rafifahasyla",
+        "Endah Novalien Renata"
+    ],
+    "Ecopreneurship": [
+        "Zaira Anjani Rahmat Dina",
+        "Muhammad Rizki",
+        "Assa Aulya Qodrati",
+        "Roydhatul Intan Widuri",
+        "Salsabila Cahyaningtyas",
+        "Zahra Tri Indriyani",
+        "Muhammad Faiq Akbar Rhamzani"
+    ]
+};
+
+function updateNama() {
+    const departemenSelect = document.getElementById("departemen");
+    const namaSelect = document.getElementById("nama");
+    const selectedDept = departemenSelect.value;
+
+    // Bersihkan opsi nama sebelumnya
+    namaSelect.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
+
+    if (selectedDept && dataPengurus[selectedDept]) {
+        namaSelect.disabled = false;
+        dataPengurus[selectedDept].forEach(nama => {
+            const option = document.createElement("option");
+            option.value = nama;
+            option.textContent = nama;
+            namaSelect.appendChild(option);
+        });
+    } else {
+        namaSelect.disabled = true;
+        namaSelect.innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
+    }
+}
+
+// Logika ketika form dikirim
+document.getElementById("absensiForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const nama = document.getElementById("nama").value;
+    const dept = document.getElementById("departemen").value;
+    const status = document.getElementById("status").value;
+    const msg = document.getElementById("statusMessage");
+
+    msg.style.color = "#27ae60";
+    msg.textContent = `Absensi ${nama} (${dept}) dengan status [${status}] berhasil dicatat!`;
+    
+    // Di sini nanti bisa disambungkan ke database/API pengumpul data
+});
+</script>
+
+</body>
+</html>
