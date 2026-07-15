@@ -437,7 +437,7 @@
       <div id="wrapKamera">
         <label>Bukti Kehadiran (Foto Wajib)</label>
         <div class="camera-box">
-          <div class="camera-hint">Gunakan kamera depan untuk mengambil foto wajah sebagai bukti kehadiran.</div>
+          <div class="camera-hint" id="cameraHint">Gunakan kamera depan untuk mengambil foto wajah sebagai bukti kehadiran.</div>
           <button type="button" class="btn-cam" id="btnAktifkanKamera">📷 Aktifkan Kamera</button>
           <video id="kamera" autoplay playsinline muted></video>
           <img id="hasilFoto" alt="Hasil Tangkapan">
@@ -449,9 +449,9 @@
       </div>
 
       <div id="wrapIzin" style="display:none;">
-        <label>Bukti Pengajuan Izin/Sakit</label>
+        <label>Bukti Pengajuan Izin/Sakit (Wajib, selain foto di atas)</label>
         <div class="camera-box">
-          <div class="camera-hint">Kamu sedang memilih status Izin/Sakit. Klik tombol di bawah untuk mengajukan izin lewat chat WhatsApp terlebih dahulu.</div>
+          <div class="camera-hint">Selain mengambil foto wajah di atas, klik tombol di bawah untuk mengajukan izin lewat chat WhatsApp.</div>
           <a href="https://wa.link/jtqkki" target="_blank" rel="noopener" id="btnAjukanIzin" class="btn-cam" style="display:block; text-decoration:none; text-align:center;">💬 Ajukan Izin ke Chat</a>
           <div class="cam-status" id="izinStatus">Belum mengajukan izin. Klik tombol di atas.</div>
         </div>
@@ -674,30 +674,33 @@ function stopKamera(){
   }
 }
 
-/* ===================== TOGGLE BUKTI: KAMERA (Hadir) vs AJUKAN IZIN (Izin/Sakit) ===================== */
+/* ===================== TOGGLE BUKTI: FOTO (SELALU) + AJUKAN IZIN (Izin/Sakit) ===================== */
 const btnAjukanIzin = document.getElementById('btnAjukanIzin');
 const izinStatus = document.getElementById('izinStatus');
+const cameraHint = document.getElementById('cameraHint');
 let izinDiklik = false;
 
 function toggleBuktiKehadiran(){
   const status = document.getElementById('status').value;
-  const wrapKamera = document.getElementById('wrapKamera');
   const wrapIzin = document.getElementById('wrapIzin');
 
+  // Kamera/foto WAJIB untuk semua status (Hadir, Izin, maupun Sakit)
+  document.getElementById('wrapKamera').style.display = 'block';
+
   if(status === 'Hadir'){
-    wrapKamera.style.display = 'block';
     wrapIzin.style.display = 'none';
+    cameraHint.textContent = 'Gunakan kamera depan untuk mengambil foto wajah sebagai bukti kehadiran.';
   } else {
-    wrapKamera.style.display = 'none';
     wrapIzin.style.display = 'block';
     izinStatus.style.display = 'block';
+    cameraHint.textContent = 'Tetap ambil foto wajah Anda di sini sebagai bukti, lalu ajukan izin lewat chat di bawah.';
   }
 }
 
 btnAjukanIzin.addEventListener('click', ()=>{
   izinDiklik = true;
   izinStatus.style.color = '#1F7A54';
-  izinStatus.textContent = '✅ Kamu sudah mengajukan izin lewat chat. Silakan lanjutkan kirim kehadiran.';
+  izinStatus.textContent = '✅ Kamu sudah mengajukan izin lewat chat. Pastikan foto di atas juga sudah diambil, lalu lanjutkan kirim kehadiran.';
 });
 
 /* ===================== KIRIM KE GOOGLE SHEETS (GOOGLE APPS SCRIPT) ===================== */
@@ -724,12 +727,18 @@ document.getElementById("absensiForm").addEventListener("submit", function(e){
   const kirimStatus = document.getElementById("kirimStatus");
   const btnKirim = document.getElementById("btnKirim");
 
-  const buktiValid = (status === 'Hadir') ? !!foto : izinDiklik;
+  // Foto SELALU wajib. Untuk Izin/Sakit, klik "Ajukan Izin ke Chat" juga wajib.
+  const buktiFotoValid = !!foto;
+  const buktiIzinValid = (status === 'Hadir') ? true : izinDiklik;
 
-  if(!dept || !nama || !status || !buktiValid){
-    err.textContent = (status === 'Hadir')
-      ? 'Mohon lengkapi semua data dan ambil foto terlebih dahulu.'
-      : 'Mohon lengkapi semua data dan klik "Ajukan Izin ke Chat" terlebih dahulu.';
+  if(!dept || !nama || !status || !buktiFotoValid || !buktiIzinValid){
+    if(!buktiFotoValid){
+      err.textContent = 'Mohon lengkapi semua data dan ambil foto terlebih dahulu.';
+    } else if(!buktiIzinValid){
+      err.textContent = 'Mohon klik "Ajukan Izin ke Chat" terlebih dahulu.';
+    } else {
+      err.textContent = 'Mohon lengkapi semua data terlebih dahulu.';
+    }
     err.style.display = 'block';
     kirimStatus.style.display = 'none';
     return;
@@ -771,15 +780,12 @@ document.getElementById("absensiForm").addEventListener("submit", function(e){
       <b>Departemen:</b> ${dept}<br>
       <b>Nama:</b> ${nama}<br>
       <b>Status:</b> ${status}
-      ${status !== 'Hadir' ? '<br><b>Bukti:</b> Sudah mengajukan izin lewat chat' : ''}
+      ${status !== 'Hadir' ? '<br><b>Keterangan:</b> Sudah mengajukan izin lewat chat & foto wajah terlampir' : ''}
     `;
+    // Foto selalu ada (wajib untuk semua status), jadi selalu ditampilkan
     const summaryPhoto = document.getElementById('summaryPhoto');
-    if(foto){
-      summaryPhoto.src = foto;
-      summaryPhoto.style.display = 'block';
-    } else {
-      summaryPhoto.style.display = 'none';
-    }
+    summaryPhoto.src = foto;
+    summaryPhoto.style.display = 'block';
 
     stopKamera();
     btnKirim.disabled = false;
