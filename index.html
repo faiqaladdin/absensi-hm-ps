@@ -389,7 +389,6 @@
       <option value="Rapat Bulanan">Rapat Bulanan</option>
       <option value="Acara HM-PS">Acara HM-PS</option>
       <option value="Rapat Departemen">Rapat Departemen</option>
-      <option value="Rapat Kabinet">Rapat Kabinet</option>
       <option value="Lainnya">Lainnya</option>
     </select>
 
@@ -429,22 +428,33 @@
       </select>
 
       <label for="status">Status Kehadiran</label>
-      <select id="status" required>
+      <select id="status" required onchange="toggleBuktiKehadiran()">
         <option value="Hadir">Hadir</option>
         <option value="Izin">Izin</option>
         <option value="Sakit">Sakit</option>
       </select>
 
-      <label>Bukti Kehadiran (Foto Wajib)</label>
-      <div class="camera-box">
-        <div class="camera-hint">Gunakan kamera depan untuk mengambil foto wajah sebagai bukti kehadiran.</div>
-        <button type="button" class="btn-cam" id="btnAktifkanKamera">📷 Aktifkan Kamera</button>
-        <video id="kamera" autoplay playsinline muted></video>
-        <img id="hasilFoto" alt="Hasil Tangkapan">
-        <canvas id="canvas" style="display:none;"></canvas>
-        <button type="button" class="btn-cam" id="btnAmbilFoto" style="display:none;">Ambil Foto</button>
-        <div class="cam-status" id="camStatus"></div>
-        <input type="hidden" id="fotoData" required>
+      <div id="wrapKamera">
+        <label>Bukti Kehadiran (Foto Wajib)</label>
+        <div class="camera-box">
+          <div class="camera-hint">Gunakan kamera depan untuk mengambil foto wajah sebagai bukti kehadiran.</div>
+          <button type="button" class="btn-cam" id="btnAktifkanKamera">📷 Aktifkan Kamera</button>
+          <video id="kamera" autoplay playsinline muted></video>
+          <img id="hasilFoto" alt="Hasil Tangkapan">
+          <canvas id="canvas" style="display:none;"></canvas>
+          <button type="button" class="btn-cam" id="btnAmbilFoto" style="display:none;">Ambil Foto</button>
+          <div class="cam-status" id="camStatus"></div>
+          <input type="hidden" id="fotoData">
+        </div>
+      </div>
+
+      <div id="wrapIzin" style="display:none;">
+        <label>Bukti Pengajuan Izin/Sakit</label>
+        <div class="camera-box">
+          <div class="camera-hint">Kamu sedang memilih status Izin/Sakit. Klik tombol di bawah untuk mengajukan izin lewat chat WhatsApp terlebih dahulu.</div>
+          <a href="https://wa.link/jtqkki" target="_blank" rel="noopener" id="btnAjukanIzin" class="btn-cam" style="display:block; text-decoration:none; text-align:center;">💬 Ajukan Izin ke Chat</a>
+          <div class="cam-status" id="izinStatus">Belum mengajukan izin. Klik tombol di atas.</div>
+        </div>
       </div>
 
       <p class="error-text" id="errForm">Mohon lengkapi semua data dan ambil foto terlebih dahulu.</p>
@@ -522,7 +532,11 @@ document.getElementById('btnBackInfo').addEventListener('click', ()=> goTo('page
 
 function toggleKegiatanLain(){
   const val = document.getElementById('jenisKegiatan').value;
-  document.getElementById('wrapKegiatanLain').style.display = (val === 'Lainnya') ? 'block' : 'none';
+  const needsDetail = (val === 'Lainnya' || val === 'Acara HM-PS');
+  document.getElementById('wrapKegiatanLain').style.display = needsDetail ? 'block' : 'none';
+  document.getElementById('kegiatanLain').placeholder = (val === 'Acara HM-PS')
+    ? 'Contoh: Malam Keakraban Mahasiswa'
+    : 'Contoh: Diskusi Panel Pendidikan';
 }
 
 document.getElementById('btnNextInfo').addEventListener('click', ()=>{
@@ -530,8 +544,9 @@ document.getElementById('btnNextInfo').addEventListener('click', ()=>{
   const jenis = document.getElementById('jenisKegiatan').value;
   const lain = document.getElementById('kegiatanLain').value;
   const err = document.getElementById('errInfo');
+  const needsDetail = (jenis === 'Lainnya' || jenis === 'Acara HM-PS');
 
-  if(!tanggal || !jenis || (jenis === 'Lainnya' && !lain.trim())){
+  if(!tanggal || !jenis || (needsDetail && !lain.trim())){
     err.style.display = 'block';
     return;
   }
@@ -659,9 +674,35 @@ function stopKamera(){
   }
 }
 
+/* ===================== TOGGLE BUKTI: KAMERA (Hadir) vs AJUKAN IZIN (Izin/Sakit) ===================== */
+const btnAjukanIzin = document.getElementById('btnAjukanIzin');
+const izinStatus = document.getElementById('izinStatus');
+let izinDiklik = false;
+
+function toggleBuktiKehadiran(){
+  const status = document.getElementById('status').value;
+  const wrapKamera = document.getElementById('wrapKamera');
+  const wrapIzin = document.getElementById('wrapIzin');
+
+  if(status === 'Hadir'){
+    wrapKamera.style.display = 'block';
+    wrapIzin.style.display = 'none';
+  } else {
+    wrapKamera.style.display = 'none';
+    wrapIzin.style.display = 'block';
+    izinStatus.style.display = 'block';
+  }
+}
+
+btnAjukanIzin.addEventListener('click', ()=>{
+  izinDiklik = true;
+  izinStatus.style.color = '#1F7A54';
+  izinStatus.textContent = '✅ Kamu sudah mengajukan izin lewat chat. Silakan lanjutkan kirim kehadiran.';
+});
+
 /* ===================== KIRIM KE GOOGLE SHEETS (GOOGLE APPS SCRIPT) ===================== */
 // GANTI TULISAN DI BAWAH INI DENGAN URL GOOGLE APPS SCRIPT KAMU!
-const scriptURL = 'https://script.google.com/macros/s/AKfycbwX55ZZhyAjg_RUxHNEJQCK_P5Z3lPh09WL7ced4AEGmk3oWzpdAwDCj1nx8HZJXiGd/exec';
+const scriptURL = 'PASTE_URL_GOOGLE_APPS_SCRIPT_DI_SINI';
 
 document.getElementById("absensiForm").addEventListener("submit", function(e){
   e.preventDefault();
@@ -671,6 +712,8 @@ document.getElementById("absensiForm").addEventListener("submit", function(e){
   const kegiatanLain = document.getElementById("kegiatanLain").value;
   if(jenisKegiatan === 'Lainnya' && kegiatanLain.trim()){
     jenisKegiatan = kegiatanLain.trim();
+  } else if(jenisKegiatan === 'Acara HM-PS' && kegiatanLain.trim()){
+    jenisKegiatan = `Acara HM-PS - ${kegiatanLain.trim()}`;
   }
 
   const dept = document.getElementById("departemen").value;
@@ -681,7 +724,12 @@ document.getElementById("absensiForm").addEventListener("submit", function(e){
   const kirimStatus = document.getElementById("kirimStatus");
   const btnKirim = document.getElementById("btnKirim");
 
-  if(!dept || !nama || !status || !foto){
+  const buktiValid = (status === 'Hadir') ? !!foto : izinDiklik;
+
+  if(!dept || !nama || !status || !buktiValid){
+    err.textContent = (status === 'Hadir')
+      ? 'Mohon lengkapi semua data dan ambil foto terlebih dahulu.'
+      : 'Mohon lengkapi semua data dan klik "Ajukan Izin ke Chat" terlebih dahulu.';
     err.style.display = 'block';
     kirimStatus.style.display = 'none';
     return;
@@ -723,8 +771,15 @@ document.getElementById("absensiForm").addEventListener("submit", function(e){
       <b>Departemen:</b> ${dept}<br>
       <b>Nama:</b> ${nama}<br>
       <b>Status:</b> ${status}
+      ${status !== 'Hadir' ? '<br><b>Bukti:</b> Sudah mengajukan izin lewat chat' : ''}
     `;
-    document.getElementById('summaryPhoto').src = foto;
+    const summaryPhoto = document.getElementById('summaryPhoto');
+    if(foto){
+      summaryPhoto.src = foto;
+      summaryPhoto.style.display = 'block';
+    } else {
+      summaryPhoto.style.display = 'none';
+    }
 
     stopKamera();
     btnKirim.disabled = false;
@@ -763,6 +818,12 @@ document.getElementById('btnReset').addEventListener('click', ()=>{
   document.getElementById('kegiatanLain').value = '';
   document.getElementById('wrapKegiatanLain').style.display = 'none';
   document.getElementById('tanggal').value = '';
+
+  izinDiklik = false;
+  izinStatus.style.color = '';
+  izinStatus.textContent = 'Belum mengajukan izin. Klik tombol di atas.';
+  document.getElementById('status').value = 'Hadir';
+  toggleBuktiKehadiran();
 
   goTo('page-cover');
 });
