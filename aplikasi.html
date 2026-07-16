@@ -1,1 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QuestLog — Kelola Waktu & Uang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
+<!-- ================= TOAST ================= -->
+<div id="toast" class="toast"></div>
+
+<!-- ================= LOADING OVERLAY ================= -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="spinner"></div>
+  <p id="loadingText">Menyimpan...</p>
+</div>
+
+<!-- ================= AUTH SCREEN ================= -->
+<section id="view-auth" class="view view-auth">
+  <div class="auth-cover">
+    <div class="auth-badge">🔥 QuestLog</div>
+    <h1>Naikkan Level<br/>Hidupmu, Hari Ini.</h1>
+    <p class="auth-sub">Catat waktu & uangmu seperti menyelesaikan misi. Simpel, seru, dan tersimpan aman di Google Sheets-mu sendiri.</p>
+  </div>
+
+  <div class="auth-card">
+    <!-- LOGIN FORM -->
+    <form id="form-login" class="auth-form">
+      <h2>Masuk ke Akunmu</h2>
+      <p class="auth-hint">Lanjutkan progres misi harianmu.</p>
+
+      <label class="field">
+        <span>Nama Akun</span>
+        <input type="text" id="login-username" placeholder="cth. rian_ganteng" autocomplete="username" required />
+      </label>
+
+      <label class="field">
+        <span>Kata Sandi</span>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required />
+      </label>
+
+      <p id="login-error" class="form-error hidden"></p>
+
+      <button type="submit" class="btn-primary btn-block">Masuk <span class="btn-arrow">→</span></button>
+      <p class="switch-link">Belum punya akun? <a href="#" id="go-register">Buat Akun</a></p>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="form-register" class="auth-form hidden">
+      <h2>Buat Akun Baru</h2>
+      <p class="auth-hint">Mulai petualangan produktivitasmu.</p>
+
+      <label class="field">
+        <span>Nama Akun</span>
+        <input type="text" id="register-username" placeholder="Pilih nama akun unik" required />
+      </label>
+
+      <label class="field">
+        <span>Kata Sandi</span>
+        <input type="password" id="register-password" placeholder="Minimal 4 karakter" required />
+      </label>
+
+      <label class="field">
+        <span>Ulangi Kata Sandi</span>
+        <input type="password" id="register-password2" placeholder="Ulangi kata sandi" required />
+      </label>
+
+      <p id="register-error" class="form-error hidden"></p>
+
+      <button type="submit" class="btn-primary btn-block">Daftar Sekarang 🚀</button>
+      <p class="switch-link">Sudah punya akun? <a href="#" id="go-login">Masuk di sini</a></p>
+    </form>
+  </div>
+</section>
+
+<!-- ================= APP SHELL (after login) ================= -->
+<div id="app-shell" class="app-shell hidden">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="avatar" id="user-avatar">R</div>
+      <div>
+        <p class="topbar-greeting">Halo,</p>
+        <p class="topbar-username" id="topbar-username">Pengguna</p>
+      </div>
+    </div>
+    <button class="btn-logout" id="btn-logout" title="Keluar">⏻</button>
+  </header>
+
+  <!-- ============ DASHBOARD ============ -->
+  <section id="view-dashboard" class="view view-dashboard">
+    <div class="hero-banner">
+      <p class="hero-eyebrow">MISI HARI INI</p>
+      <h2>Pilih arena yang mau kamu taklukkan</h2>
+    </div>
+
+    <div class="menu-grid">
+      <button class="menu-card menu-card--time" id="btn-open-waktu">
+        <span class="menu-icon">⏱️</span>
+        <span class="menu-title">Kelola Waktu</span>
+        <span class="menu-desc">Catat & pantau aktivitas harianmu</span>
+        <span class="menu-cta">Mulai Misi →</span>
+      </button>
+
+      <button class="menu-card menu-card--money" id="btn-open-uang">
+        <span class="menu-icon">💰</span>
+        <span class="menu-title">Kelola Uang</span>
+        <span class="menu-desc">Catat pemasukan & pengeluaranmu</span>
+        <span class="menu-cta">Mulai Misi →</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ KELOLA WAKTU ============ -->
+  <section id="view-waktu" class="view hidden">
+    <div class="page-header">
+      <button class="btn-back" data-back>← Kembali</button>
+      <h2>⏱️ Kelola Waktu</h2>
+      <p class="page-sub">Setiap aktivitas yang kamu selesaikan adalah misi yang tuntas!</p>
+    </div>
+
+    <form id="form-waktu" class="mission-form">
+      <div class="mission-grid">
+        <label class="field">
+          <span>📅 Tanggal</span>
+          <input type="date" id="waktu-tanggal" required />
+        </label>
+
+        <label class="field">
+          <span>🕒 Jam</span>
+          <input type="time" id="waktu-jam" required />
+        </label>
+
+        <label class="field">
+          <span>🏷️ Kategori</span>
+          <select id="waktu-kategori" required>
+            <option value="" disabled selected>Pilih kategori</option>
+            <option>Tidur</option>
+            <option>Olahraga</option>
+            <option>Kuliah</option>
+            <option>Ngaji</option>
+            <option>Nderes</option>
+            <option>Sorogan</option>
+            <option>Nyuci</option>
+            <option>Lainnya</option>
+          </select>
+        </label>
+
+        <label class="field hidden" id="waktu-kategori-lain-wrap">
+          <span>✏️ Kategori Lainnya</span>
+          <input type="text" id="waktu-kategori-lain" placeholder="Tulis kategori kamu..." />
+        </label>
+
+        <label class="field">
+          <span>📌 Status</span>
+          <select id="waktu-status" required>
+            <option value="" disabled selected>Pilih status</option>
+            <option>Terlaksana</option>
+            <option>Proses</option>
+            <option>Belum Terlaksana</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mission-actions">
+        <button type="button" class="btn-icon btn-icon--cancel" id="btn-waktu-cancel" title="Batal">✕</button>
+        <button type="submit" class="btn-icon btn-icon--confirm" title="Simpan Misi">✓</button>
+      </div>
+    </form>
+
+    <div class="section-divider">
+      <span>📜 Log Misi Hari Ini</span>
+    </div>
+    <div id="waktu-list" class="mission-list">
+      <p class="empty-state">Belum ada misi tercatat. Yuk mulai catat aktivitas pertamamu!</p>
+    </div>
+
+    <div class="section-divider">
+      <span>📈 Kurva Konsistensi</span>
+    </div>
+    <div class="chart-card">
+      <canvas id="chart-konsistensi" height="220"></canvas>
+    </div>
+  </section>
+
+  <!-- ============ KELOLA UANG ============ -->
+  <section id="view-uang" class="view hidden">
+    <div class="page-header">
+      <button class="btn-back" data-back>← Kembali</button>
+      <h2>💰 Kelola Uang</h2>
+      <p class="page-sub">Setiap koin yang tercatat, satu langkah lebih dekat ke tujuan finansialmu.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="pengeluaran">📤 Pengeluaran</button>
+      <button class="tab-btn" data-tab="pemasukan">📥 Pemasukan</button>
+    </div>
+
+    <!-- PENGELUARAN -->
+    <form id="form-pengeluaran" class="money-form tab-panel active" data-panel="pengeluaran">
+      <label class="field">
+        <span>📅 Tanggal</span>
+        <input type="date" id="pengeluaran-tanggal" required />
+      </label>
+
+      <label class="field">
+        <span>🏷️ Kategori</span>
+        <select id="pengeluaran-kategori" required>
+          <option value="" disabled selected>Pilih kategori</option>
+          <option>Makanan</option>
+          <option>Minuman</option>
+          <option>Motor</option>
+          <option>Pulsa</option>
+          <option>Belanja</option>
+          <option>Kebutuhan</option>
+          <option>Lainnya</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>💵 Jumlah (Rp)</span>
+        <input type="text" inputmode="numeric" id="pengeluaran-jumlah" placeholder="cth. 25000" required />
+      </label>
+
+      <label class="field">
+        <span>📝 Keterangan</span>
+        <textarea id="pengeluaran-keterangan" rows="2" placeholder="Detail pengeluaran..."></textarea>
+      </label>
+
+      <button type="submit" class="btn-primary btn-block btn-expense">Simpan Pengeluaran ✕</button>
+    </form>
+
+    <!-- PEMASUKAN -->
+    <form id="form-pemasukan" class="money-form tab-panel" data-panel="pemasukan">
+      <label class="field">
+        <span>📅 Tanggal</span>
+        <input type="date" id="pemasukan-tanggal" required />
+      </label>
+
+      <label class="field">
+        <span>🏷️ Kategori</span>
+        <select id="pemasukan-kategori" required>
+          <option value="" disabled selected>Pilih kategori</option>
+          <option>Gaji</option>
+          <option>Kiriman</option>
+          <option>Hadiah</option>
+          <option>Lainnya</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>💵 Jumlah (Rp)</span>
+        <input type="text" inputmode="numeric" id="pemasukan-jumlah" placeholder="cth. 50000" required />
+      </label>
+
+      <label class="field">
+        <span>📝 Keterangan</span>
+        <textarea id="pemasukan-keterangan" rows="2" placeholder="Detail pemasukan..."></textarea>
+      </label>
+
+      <button type="submit" class="btn-primary btn-block btn-income">Simpan Pemasukan ✓</button>
+    </form>
+
+    <div class="section-divider">
+      <span>📊 Ringkasan Terbaru</span>
+    </div>
+    <div class="money-summary">
+      <div class="summary-card summary-card--in">
+        <span class="summary-label">Total Pemasukan</span>
+        <span class="summary-value" id="summary-in">Rp 0</span>
+      </div>
+      <div class="summary-card summary-card--out">
+        <span class="summary-label">Total Pengeluaran</span>
+        <span class="summary-value" id="summary-out">Rp 0</span>
+      </div>
+    </div>
+    <div id="money-list" class="mission-list"></div>
+  </section>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
