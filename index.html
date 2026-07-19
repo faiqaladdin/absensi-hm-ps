@@ -258,7 +258,7 @@
 
     <div class="kas-status lunas" id="kasStatusBox">
       <div>
-        <div class="kas-label">Status Kas Bulanan</div>
+        <div class="kas-label" id="kasLabel">Status Kas Bulanan</div>
         <div class="kas-amount" id="kasAmount">Memuat...</div>
       </div>
       <div style="font-size:26px;">💰</div>
@@ -456,7 +456,7 @@
 /* ============================================================
    GANTI URL DI BAWAH INI DENGAN URL WEB APP APPS SCRIPT KAMU!
 ============================================================ */
-const scriptURL = 'https://script.google.com/macros/s/AKfycbyRWTkb1SR9CX-ZnB8ix4Y1Dij6O7mUP8vBJBYz5ZXMrqyw5msc6fCVo0bRIke_96N-/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbx0cLNz9UHW1EduMbu6vGkmQqaBDt2qBJ4rh20wgAp081rgvKav4ytg6iP6RvrAMYu1ZQ/exec';
 
 async function callBackend(action, payload){
   const res = await fetch(scriptURL, {
@@ -606,35 +606,39 @@ async function muatBeranda(){
       : '<div class="empty-note">Belum ada kegiatan yang dijadwalkan.</div>';
   }catch(e){ document.getElementById('jadwalList').innerHTML = '<div class="empty-note">Gagal memuat jadwal.</div>'; }
 
-  // Status kas
+  // Status kas — FIX: sekarang menampilkan nominal ASLI yang diinput admin
+  // di "Kelola Kas" (bukan cuma teks statis "Lunas ✓" tanpa angka).
   try{
     const kas = await callBackend('getKasStatus', { nama: sesi.nama });
     const box = document.getElementById('kasStatusBox');
     const amount = document.getElementById('kasAmount');
+    const label = document.getElementById('kasLabel');
     if(kas.tunggakan > 0){
       box.className = 'kas-status tunggak';
+      label.textContent = 'Kekurangan Kas';
       amount.textContent = `- Rp${kas.tunggakan.toLocaleString('id-ID')}`;
     } else {
       box.className = 'kas-status lunas';
-      amount.textContent = 'Lunas ✓';
+      label.textContent = 'Kas Bulan Ini';
+      amount.textContent = `Lunas · Rp${(kas.bulanIni||0).toLocaleString('id-ID')}`;
     }
   }catch(e){ document.getElementById('kasAmount').textContent = 'Gagal memuat'; }
 
-  // Rekap kegiatan terakhir (ambil dari riwayat, kegiatan paling akhir yang sudah lewat)
+  // Rekap kegiatan terakhir — FIX: sekarang menampilkan STATUS KEHADIRAN
+  // MILIK SENDIRI di kegiatan terakhir, bukan rekap gabungan semua orang.
   try{
     const riw = await callBackend('getRiwayat', {});
     const ringkas = document.getElementById('rekapRingkas');
     if(riw.data && riw.data.length){
       const terakhir = riw.data[0];
-      const rk = await callBackend('getRekapKegiatan', { kegiatanId: terakhir.id });
+      const status = await callBackend('getStatusSendiri', { kegiatanId: terakhir.id, nama: sesi.nama });
+      const st = status.status || 'Alpa';
       ringkas.innerHTML = `<div class="kegiatan-item">
         <div class="kegiatan-nama">${terakhir.nama}</div>
         <div class="kegiatan-meta"><span>${formatTanggalIndo(terakhir.tanggal)}</span></div>
-        <div class="badge-row" style="margin-top:10px;">
-          <div class="badge hadir"><span class="num">${rk.hadir}</span>Hadir</div>
-          <div class="badge izin"><span class="num">${rk.izin}</span>Izin</div>
-          <div class="badge sakit"><span class="num">${rk.sakit}</span>Sakit</div>
-          <div class="badge alpa"><span class="num">${rk.alpa}</span>Alpa</div>
+        <div class="list-row" style="border:none; padding-top:10px; padding-bottom:0;">
+          <span class="nm">Status kehadiranmu</span>
+          <span class="st ${st.toLowerCase()}">${st}</span>
         </div>
       </div>`;
     } else {
@@ -695,6 +699,10 @@ async function muatKegiatanAbsensi(){
     const today = todayISO();
     const now = new Date();
     const jamSekarang = now.getHours()*60 + now.getMinutes();
+    // Kegiatan yang tampil di sini = kegiatan yang ditambahkan admin dengan
+    // tanggal HARI INI, dan waktu sekarang berada di antara jam mulai-selesai
+    // yang admin tentukan. Ini otomatis mengikuti apa pun yang admin input
+    // di "Kelola Kegiatan" (nama, jam, tempat).
     kegiatanAktifList = (hasil.data||[]).filter(k=>{
       if(k.tanggal !== today || !k.jamMulai || !k.jamSelesai) return false;
       const [h1,m1] = k.jamMulai.split(':').map(Number);
@@ -919,6 +927,18 @@ document.querySelectorAll('#kasNominalGroup .radio-opt').forEach(opt=>{
   });
 });
 
+// FIX: helper untuk mengembalikan pilihan nominal ke default (Rp15.000)
+// setelah data berhasil disimpan, supaya entri berikutnya tidak "kebawa"
+// nominal dari entri sebelumnya tanpa disadari admin.
+function resetPilihanNominalKas(){
+  kasNominalTerpilih = '15000';
+  document.getElementById('kasNominalLain').value = '';
+  document.getElementById('kasNominalLain').style.display = 'none';
+  document.querySelectorAll('#kasNominalGroup .radio-opt').forEach(o=>o.classList.remove('selected'));
+  const def = document.querySelector('#kasNominalGroup .radio-opt[data-val="15000"]');
+  if(def) def.classList.add('selected');
+}
+
 async function muatKelolaKas(){
   const el = document.getElementById('daftarKasAdmin');
   el.innerHTML = '<div class="empty-note">Memuat...</div>';
@@ -944,10 +964,11 @@ document.getElementById('btnSimpanKas').addEventListener('click', async ()=>{
   btn.disabled = true;
   try{
     await callBackend('addKas', { departemen, nama, nominal, bulan, tanggal, dicatatOleh: sesi.nama });
-    document.getElementById('kasNama').value = '';
+    document.getElementById('kasDept').value = '';
+    isiDropdownNama(document.getElementById('kasNama'), '', 'Pilih Departemen Terlebih Dahulu');
     document.getElementById('kasBulan').value = '';
     document.getElementById('kasTanggal').value = '';
-    document.getElementById('kasNominalLain').value = '';
+    resetPilihanNominalKas(); // FIX: reset pilihan nominal juga, bukan cuma field lainnya
     muatKelolaKas();
   }catch(e){ err.textContent = 'Gagal menyimpan. Coba lagi.'; err.style.display = 'block'; }
   btn.disabled = false;
