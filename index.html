@@ -36,7 +36,7 @@
     padding:28px 16px 110px;
   }
   h1,h2,h3{font-family:'Poppins', sans-serif; margin:0;}
-  .app{width:100%; max-width:480px; display:flex; flex-direction:column; gap:18px;}
+  .app{width:100%; max-width:480px; display:flex; flex-direction:column; gap:18px; position:relative;}
 
   .steps{display:flex; align-items:center; justify-content:center; gap:10px; padding:4px 0 2px;}
   .leaf{width:16px; height:16px; border-radius:0 60% 0 60%; background:var(--green-pale); border:1.5px solid var(--green-fresh); transition:all .35s ease;}
@@ -50,14 +50,41 @@
   .card.active{display:flex;}
   @keyframes rise{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
 
+  /* ---------- ANIMASI "BERJALAN" DI COVER & LOGIN ---------- */
+  .float-shape{
+    position:absolute; border-radius:0 62% 0 62%; border:1.5px solid rgba(255,255,255,0.14);
+    pointer-events:none; z-index:0;
+  }
+  @keyframes floatWalk{
+    0%{ transform: translate(0,0) rotate(0deg); }
+    50%{ transform: translate(12px,-16px) rotate(8deg); }
+    100%{ transform: translate(0,0) rotate(0deg); }
+  }
+  .float-1{width:340px; height:340px; top:-90px; right:-110px; animation:floatWalk 9s ease-in-out infinite;}
+  .float-2{width:220px; height:220px; bottom:-70px; left:-70px; border-color:rgba(255,255,255,0.1); border-radius:62% 0 62% 0; animation:floatWalk 11s ease-in-out infinite reverse;}
+  .float-3{width:90px; height:90px; top:40%; left:-40px; border-color:rgba(201,154,70,0.28); animation:floatWalk 7s ease-in-out infinite;}
+
+  .fade-in{opacity:0; transform:translateY(10px); animation:fadeUp .6s ease forwards;}
+  @keyframes fadeUp{to{opacity:1; transform:translateY(0);}}
+  .fi-1{animation-delay:.05s;} .fi-2{animation-delay:.2s;} .fi-3{animation-delay:.35s;}
+  .fi-4{animation-delay:.5s;} .fi-5{animation-delay:.65s;} .fi-6{animation-delay:.8s;}
+
+  .walk-dots{display:flex; gap:6px; justify-content:center; margin-top:26px; z-index:1;}
+  .walk-dots span{
+    width:7px; height:7px; border-radius:50%; background:var(--gold);
+    animation:walkBounce 1.1s ease-in-out infinite;
+  }
+  .walk-dots span:nth-child(2){animation-delay:.15s;}
+  .walk-dots span:nth-child(3){animation-delay:.3s;}
+  .walk-dots span:nth-child(4){animation-delay:.45s;}
+  @keyframes walkBounce{0%,60%,100%{transform:translateY(0); opacity:.5;} 30%{transform:translateY(-7px); opacity:1;}}
+
   #page-cover, #page-login{
     align-items:center; text-align:center;
     padding:56px 28px 46px;
     background:linear-gradient(160deg, var(--forest) 0%, var(--green-deep) 55%, var(--green-mid) 100%);
     color:#fff; position:relative; overflow:hidden; min-height:480px; justify-content:center;
   }
-  #page-cover::before, #page-login::before{content:""; position:absolute; width:340px; height:340px; border-radius:0 62% 0 62%; border:1.5px solid rgba(255,255,255,0.14); top:-90px; right:-110px;}
-  #page-cover::after, #page-login::after{content:""; position:absolute; width:220px; height:220px; border-radius:62% 0 62% 0; border:1.5px solid rgba(255,255,255,0.1); bottom:-70px; left:-70px;}
   .cover-eyebrow{font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--green-pale); font-weight:600; z-index:1;}
   .cover-title{font-size:30px; font-weight:800; margin-top:14px; line-height:1.28; z-index:1;}
   .cover-title span{color:var(--gold);}
@@ -150,6 +177,61 @@
   .icon-mini.edit{background:var(--green-pale); color:var(--green-deep);}
   .icon-mini.del{background:#FCE4E1; color:var(--danger);}
 
+  /* ---------- HOME ---------- */
+  .date-hero{
+    background:linear-gradient(150deg, var(--forest), var(--green-mid));
+    color:#fff; border-radius:var(--radius); padding:22px 20px; text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .date-hero .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--green-pale); font-weight:700;}
+  .date-hero .day{font-size:20px; font-weight:800; margin-top:6px; font-family:'Poppins',sans-serif;}
+
+  .home-section{margin-top:6px;}
+  .home-section h3{font-size:14.5px; color:var(--forest); margin-bottom:8px;}
+
+  .jadwal-item{
+    background:#FBFEFC; border:1px solid #E1F1E7; border-radius:12px;
+    padding:11px 14px; margin-bottom:8px; font-size:13.5px; font-weight:600; color:var(--ink);
+  }
+
+  .kas-card{
+    border-radius:14px; padding:16px; display:flex; align-items:center; justify-content:space-between;
+    margin-top:4px;
+  }
+  .kas-card.lunas{background:#E4F7EC; border:1.5px solid #B7E5C8;}
+  .kas-card.menunggak{background:#FCE9E7; border:1.5px solid #F3BDB7;}
+  .kas-card .lbl{font-size:12px; font-weight:600; color:var(--ink-soft);}
+  .kas-card .val{font-size:19px; font-weight:800; font-family:'Poppins',sans-serif; margin-top:2px;}
+  .kas-card.lunas .val{color:var(--green-mid);}
+  .kas-card.menunggak .val{color:var(--danger);}
+
+  .rekap-grid{display:flex; gap:8px; margin-top:6px;}
+  .rekap-box{
+    flex:1; background:#FBFEFC; border:1px solid #E1F1E7; border-radius:12px;
+    padding:12px 6px; text-align:center;
+  }
+  .rekap-box .num{font-size:17px; font-weight:800; color:var(--forest); font-family:'Poppins',sans-serif;}
+  .rekap-box .lbl{font-size:10.5px; color:var(--ink-soft); font-weight:600; margin-top:2px;}
+
+  .btn-isi-absen{
+    width:100%; margin-top:20px; border:none; padding:15px; border-radius:14px;
+    font-weight:800; font-size:15px; font-family:'Poppins',sans-serif; cursor:pointer;
+    color:#fff; background:var(--green-mid); transition:transform .15s ease;
+  }
+  .btn-isi-absen:hover{background:var(--forest); transform:translateY(-2px);}
+
+  /* ---------- TAB SWITCH ADMIN ---------- */
+  .tab-switch{display:flex; background:var(--green-pale); border-radius:14px; padding:4px; margin-top:4px; margin-bottom:14px;}
+  .tab-switch button{
+    flex:1; border:none; background:transparent; padding:10px; border-radius:11px;
+    font-weight:700; font-size:13px; color:var(--green-deep); cursor:pointer; font-family:'Poppins',sans-serif;
+  }
+  .tab-switch button.active{background:#fff; color:var(--forest); box-shadow:0 6px 14px -8px rgba(11,61,46,0.3);}
+  .admin-tab{display:none;}
+  .admin-tab.active{display:block;}
+
+  .jumlah-lain-wrap{display:none;}
+
   @media (max-width:400px){
     .card{padding:26px 18px;}
     .cover-title{font-size:25px;}
@@ -168,20 +250,26 @@
 
   <!-- ============ COVER ============ -->
   <section class="card active" id="page-cover">
-    <div class="cover-eyebrow">Sistem Absensi Digital</div>
-    <h1 class="cover-title">Absensi Kabinet <span>Adhikara</span></h1>
-    <div class="cover-sub">HM-PS Pendidikan Matematika</div>
-    <div class="cover-tagline">"Σ Bertumbuh bersama, SIGMA berkarya Σ"</div>
-    <button class="btn-start" id="btnMulai">Mulai Absensi →</button>
+    <div class="float-shape float-1"></div>
+    <div class="float-shape float-2"></div>
+    <div class="float-shape float-3"></div>
+    <div class="cover-eyebrow fade-in fi-1">Sistem Absensi Digital</div>
+    <h1 class="cover-title fade-in fi-2">Absensi Kabinet <span>Adhikara</span></h1>
+    <div class="cover-sub fade-in fi-3">HM-PS Pendidikan Matematika</div>
+    <div class="cover-tagline fade-in fi-4">"Σ Bertumbuh bersama, SIGMA berkarya Σ"</div>
+    <button class="btn-start fade-in fi-5" id="btnMulai">Mulai Absensi →</button>
+    <div class="walk-dots fade-in fi-6"><span></span><span></span><span></span><span></span></div>
   </section>
 
   <!-- ============ LOGIN ============ -->
   <section class="card" id="page-login">
-    <div class="cover-eyebrow">Masuk Akun</div>
-    <h1 class="cover-title" style="font-size:24px;">Login Pengurus</h1>
-    <div class="cover-sub">Isi data berikut untuk melanjutkan absensi.</div>
+    <div class="float-shape float-1"></div>
+    <div class="float-shape float-2"></div>
+    <div class="cover-eyebrow fade-in fi-1">Masuk Akun</div>
+    <h1 class="cover-title fade-in fi-2" style="font-size:24px;">Login Pengurus</h1>
+    <div class="cover-sub fade-in fi-3">Isi data berikut untuk melanjutkan absensi.</div>
 
-    <div class="login-form">
+    <div class="login-form fade-in fi-4">
       <label for="loginDepartemen">Nama Departemen</label>
       <select id="loginDepartemen" onchange="updateNamaLogin()">
         <option value="">-- Pilih Departemen --</option>
@@ -202,8 +290,54 @@
       <input type="password" id="loginSandi" placeholder="Masukkan kode sandi kamu" inputmode="numeric">
     </div>
 
-    <button class="btn-start" id="btnLogin" style="margin-top:22px;">Masuk</button>
+    <button class="btn-start fade-in fi-5" id="btnLogin" style="margin-top:22px;">Masuk</button>
     <p class="error-text" id="errLogin" style="color:#FFD3CE;">Data tidak ditemukan.</p>
+  </section>
+
+  <!-- ============ HOME ============ -->
+  <section class="card" id="page-home">
+    <div class="topbar">
+      <div class="who">
+        <b id="homeWhoNama">-</b>
+        <span id="homeWhoDept">-</span>
+      </div>
+      <div class="btns">
+        <button class="chip-btn" id="btnKeAdminHome" style="display:none;">⚙ Edit</button>
+        <button class="chip-btn logout" id="btnLogoutHome">Keluar</button>
+      </div>
+    </div>
+
+    <div class="date-hero" style="margin-top:14px;">
+      <div class="eyebrow">Hari Ini</div>
+      <div class="day" id="homeHariIni">Memuat...</div>
+    </div>
+
+    <div class="home-section" style="margin-top:16px;">
+      <h3>📋 Jadwal Kegiatan Hari Ini</h3>
+      <div id="homeJadwal"><div class="info-empty">Memuat jadwal...</div></div>
+    </div>
+
+    <div class="home-section">
+      <h3>💳 Status Kas</h3>
+      <div class="kas-card" id="homeKasCard">
+        <div>
+          <div class="lbl">Status kamu</div>
+          <div class="val" id="homeKasVal">Memuat...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-section">
+      <h3>📊 Rekap Kehadiranmu</h3>
+      <div class="rekap-grid">
+        <div class="rekap-box"><div class="num" id="rekapTotal">0</div><div class="lbl">Total</div></div>
+        <div class="rekap-box"><div class="num" id="rekapHadir">0</div><div class="lbl">Hadir</div></div>
+        <div class="rekap-box"><div class="num" id="rekapIzin">0</div><div class="lbl">Izin</div></div>
+        <div class="rekap-box"><div class="num" id="rekapSakit">0</div><div class="lbl">Sakit</div></div>
+      </div>
+    </div>
+
+    <button class="btn-isi-absen" id="btnIsiAbsen">Isi Absensi Sekarang →</button>
   </section>
 
   <!-- ============ PAGE ABSENSI ============ -->
@@ -214,7 +348,7 @@
         <span id="whoDept">-</span>
       </div>
       <div class="btns">
-        <button class="chip-btn" id="btnKeAdmin" style="display:none;">⚙ Kelola Kegiatan</button>
+        <button class="chip-btn" id="btnKeHomeFromAbsensi">🏠 Beranda</button>
         <button class="chip-btn logout" id="btnLogout">Keluar</button>
       </div>
     </div>
@@ -273,26 +407,82 @@
     </form>
   </section>
 
-  <!-- ============ ADMIN: KELOLA KEGIATAN ============ -->
+  <!-- ============ ADMIN: EDIT (KEGIATAN & KAS) ============ -->
   <section class="card" id="page-admin">
-    <div class="page-title">Kelola Kegiatan ⚙️</div>
-    <div class="page-desc">Tambah, ubah, atau hapus kegiatan yang tampil di halaman absensi.</div>
+    <div class="page-title">Edit ⚙️</div>
+    <div class="page-desc">Kelola data kegiatan dan kas kabinet.</div>
 
-    <label for="admNama">Nama Kegiatan</label>
-    <input type="text" id="admNama" placeholder="cth. Rapat Bulanan Kabinet">
+    <div class="tab-switch">
+      <button class="active" id="tabKegiatanBtn">Kelola Kegiatan</button>
+      <button id="tabKasBtn">Kelola Kas</button>
+    </div>
 
-    <label for="admTanggal">Tanggal Kegiatan</label>
-    <input type="date" id="admTanggal">
+    <!-- TAB: KELOLA KEGIATAN -->
+    <div class="admin-tab active" id="tabKegiatan">
+      <label for="admNama">Nama Kegiatan</label>
+      <input type="text" id="admNama" placeholder="cth. Rapat Bulanan Kabinet">
 
-    <input type="hidden" id="admEditId" value="">
-    <button type="button" class="btn-submit" id="btnSimpanKegiatan" style="margin-top:18px;">Tambah Kegiatan</button>
+      <label for="admTanggal">Tanggal Kegiatan</label>
+      <input type="date" id="admTanggal">
 
-    <div class="admin-list" id="adminList">
-      <div class="info-empty">Memuat daftar kegiatan...</div>
+      <input type="hidden" id="admEditId" value="">
+      <button type="button" class="btn-submit" id="btnSimpanKegiatan" style="margin-top:18px;">Tambah Kegiatan</button>
+
+      <div class="admin-list" id="adminList">
+        <div class="info-empty">Memuat daftar kegiatan...</div>
+      </div>
+    </div>
+
+    <!-- TAB: KELOLA KAS -->
+    <div class="admin-tab" id="tabKas">
+      <label for="kasDepartemen">Nama Departemen</label>
+      <select id="kasDepartemen" onchange="updateNamaKas()">
+        <option value="">-- Pilih Departemen --</option>
+        <option value="BPH">Badan Pengurus Harian (BPH)</option>
+        <option value="Pendidikan dan Intelektual">Departemen Pendidikan dan Intelektual</option>
+        <option value="Kajian Aksi Strategi">Departemen Kajian Aksi Strategi</option>
+        <option value="Minat dan Bakat">Departemen Minat dan Bakat</option>
+        <option value="Media dan Informasi">Departemen Media dan Informasi</option>
+        <option value="Ecopreneurship">Departemen Ecopreneurship</option>
+      </select>
+
+      <label for="kasNamaPengurus">Nama Pengurus</label>
+      <select id="kasNamaPengurus" disabled>
+        <option value="">-- Pilih Departemen Terlebih Dahulu --</option>
+      </select>
+
+      <label for="kasJumlah">Jumlah Kas</label>
+      <select id="kasJumlah" onchange="toggleJumlahLain()">
+        <option value="15000">Rp15.000</option>
+        <option value="30000">Rp30.000</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+      <div class="jumlah-lain-wrap" id="jumlahLainWrap">
+        <label for="kasJumlahLain">Nominal Lainnya (Rp)</label>
+        <input type="text" id="kasJumlahLain" inputmode="numeric" placeholder="cth. 20000">
+      </div>
+
+      <label for="kasBulan">Bulan</label>
+      <select id="kasBulan">
+        <option>Januari</option><option>Februari</option><option>Maret</option>
+        <option>April</option><option>Mei</option><option>Juni</option>
+        <option>Juli</option><option>Agustus</option><option>September</option>
+        <option>Oktober</option><option>November</option><option>Desember</option>
+      </select>
+
+      <label for="kasTanggal">Tanggal</label>
+      <input type="date" id="kasTanggal">
+
+      <input type="hidden" id="kasEditId" value="">
+      <button type="button" class="btn-submit" id="btnSimpanKas" style="margin-top:18px;">Tambah Kas</button>
+
+      <div class="admin-list" id="kasList">
+        <div class="info-empty">Memuat data kas...</div>
+      </div>
     </div>
 
     <div class="row-btns" style="margin-top:20px;">
-      <button type="button" class="btn-secondary" id="btnBackAdmin">← Kembali ke Absensi</button>
+      <button type="button" class="btn-secondary" id="btnBackAdmin">← Kembali ke Beranda</button>
     </div>
   </section>
 
@@ -308,6 +498,7 @@
     <img id="summaryPhoto" class="summary-photo" alt="Bukti Foto">
 
     <div class="row-btns" style="margin-top:22px;">
+      <button type="button" class="btn-secondary" id="btnKeHomeFromSuccess" style="flex:1;">🏠 Beranda</button>
       <button type="button" class="btn-primary" id="btnReset" style="flex:1;">Isi Absensi Lagi</button>
     </div>
   </section>
@@ -325,19 +516,19 @@
 /* =====================================================================
    KONFIGURASI PENTING — ganti dengan URL Web App Google Apps Script kamu
    ===================================================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxd3q1R3SYCfMkoVIKPrEA3K8cDvb3yL-o2yNIt8R-mb5zi3aMc96x32l7xLJxUA0EsAw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyX6fy9_gVxO4rT5y1GwpIIceqWWYsN10JVjCsIPfyXXPZkkoKo4gqP2Aqux-lO5Mgt/exec";
 
 async function callAPI(payload){
   const res = await fetch(SCRIPT_URL, {
     method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" }, // hindari CORS preflight
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify(payload)
   });
   return res.json();
 }
 
 /* ===================== NAVIGASI ANTAR HALAMAN ===================== */
-const pages = ["page-cover","page-login","page-absensi","page-admin","page-success"];
+const pages = ["page-cover","page-login","page-home","page-absensi","page-admin","page-success"];
 function goTo(pageId){
   pages.forEach(p => document.getElementById(p).classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
@@ -345,10 +536,11 @@ function goTo(pageId){
 }
 
 let currentUser = null; // {nama, departemen, jabatan, role}
+let lastJamKirim = "";
 
 document.getElementById('btnMulai').addEventListener('click', ()=> goTo('page-login'));
 
-/* ===================== DATA NAMA PER DEPARTEMEN (untuk dropdown login) ===================== */
+/* ===================== DATA NAMA PER DEPARTEMEN (untuk dropdown) ===================== */
 const dataPengurus = {
   "BPH": ["Eliza Cahya Nur Fitriani","Nabila Putri Fanisha","Nur'aini Zakiah","Dinda Tri Hapsari","Juwairiyah Miftakhul Jannah","Cinta Syaifa Azzahra"],
   "Pendidikan dan Intelektual": ["Firdasari Andarayogi","Nita Maharani","Khoirun Nisa' Cipta Tsany","Nency Surya Andini","Elia Mu'shoda","Azizun Niswah","Meylani Seviasti","Ahmad Muzaki Zulkarnain"],
@@ -375,6 +567,28 @@ function updateNamaLogin(){
   }
 }
 
+function updateNamaKas(){
+  const dept = document.getElementById("kasDepartemen").value;
+  const namaSelect = document.getElementById("kasNamaPengurus");
+  namaSelect.innerHTML = '<option value="">-- Pilih Nama Pengurus --</option>';
+  if(dept && dataPengurus[dept]){
+    namaSelect.disabled = false;
+    dataPengurus[dept].forEach(nama=>{
+      const opt = document.createElement("option");
+      opt.value = nama; opt.textContent = nama;
+      namaSelect.appendChild(opt);
+    });
+  } else {
+    namaSelect.disabled = true;
+    namaSelect.innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
+  }
+}
+
+function toggleJumlahLain(){
+  const val = document.getElementById("kasJumlah").value;
+  document.getElementById("jumlahLainWrap").style.display = (val === "Lainnya") ? "block" : "none";
+}
+
 /* ===================== LOGIN ===================== */
 document.getElementById("btnLogin").addEventListener("click", async ()=>{
   const departemen = document.getElementById("loginDepartemen").value;
@@ -394,15 +608,20 @@ document.getElementById("btnLogin").addEventListener("click", async ()=>{
     const res = await callAPI({ action:"login", departemen, nama, sandi });
     if(res.status === "success"){
       currentUser = { nama: res.nama, departemen: res.departemen, jabatan: res.jabatan, role: res.role };
+
       document.getElementById("whoNama").textContent = currentUser.nama;
       document.getElementById("whoDept").textContent = currentUser.jabatan ? (currentUser.departemen + " · " + currentUser.jabatan) : currentUser.departemen;
-      document.getElementById("btnKeAdmin").style.display = (currentUser.role === "Admin") ? "inline-block" : "none";
+      document.getElementById("homeWhoNama").textContent = currentUser.nama;
+      document.getElementById("homeWhoDept").textContent = currentUser.departemen;
+
+      const isAdmin = currentUser.role === "Admin";
+      document.getElementById("btnKeAdminHome").style.display = isAdmin ? "inline-block" : "none";
 
       const today = new Date().toISOString().split('T')[0];
       document.getElementById("tanggal").value = today;
 
-      goTo("page-absensi");
-      loadKegiatanHariIni();
+      goTo("page-home");
+      loadHomeData();
     } else {
       err.textContent = res.message || "Data tidak ditemukan.";
       err.style.display = "block";
@@ -414,16 +633,66 @@ document.getElementById("btnLogin").addEventListener("click", async ()=>{
   btn.disabled = false; btn.textContent = "Masuk";
 });
 
-document.getElementById("btnLogout").addEventListener("click", ()=>{
+function doLogout(){
   currentUser = null;
   document.getElementById("loginDepartemen").value = "";
   document.getElementById("loginNama").innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
   document.getElementById("loginNama").disabled = true;
   document.getElementById("loginSandi").value = "";
   goTo("page-cover");
-});
+}
+document.getElementById("btnLogout").addEventListener("click", doLogout);
+document.getElementById("btnLogoutHome").addEventListener("click", doLogout);
 
-/* ===================== MUAT KEGIATAN HARI INI ===================== */
+document.getElementById("btnKeHomeFromAbsensi").addEventListener("click", ()=>{ goTo("page-home"); loadHomeData(); });
+document.getElementById("btnKeHomeFromSuccess").addEventListener("click", ()=>{ goTo("page-home"); loadHomeData(); });
+document.getElementById("btnIsiAbsen").addEventListener("click", ()=>{ goTo("page-absensi"); loadKegiatanHariIni(); });
+
+/* ===================== HOME ===================== */
+async function loadHomeData(){
+  document.getElementById("homeHariIni").textContent = "Memuat...";
+  document.getElementById("homeJadwal").innerHTML = '<div class="info-empty">Memuat jadwal...</div>';
+  document.getElementById("homeKasVal").textContent = "Memuat...";
+
+  try{
+    const res = await callAPI({ action:"getHomeData", nama: currentUser.nama, departemen: currentUser.departemen });
+    if(res.status !== "success") return;
+
+    document.getElementById("homeHariIni").textContent = res.hariIni;
+
+    const jadwalEl = document.getElementById("homeJadwal");
+    if(!res.jadwal || res.jadwal.length === 0){
+      jadwalEl.innerHTML = '<div class="info-empty">Belum ada kegiatan hari ini.</div>';
+    } else {
+      jadwalEl.innerHTML = "";
+      res.jadwal.forEach(k=>{
+        const div = document.createElement("div");
+        div.className = "jadwal-item";
+        div.textContent = "🗓️ " + k.nama;
+        jadwalEl.appendChild(div);
+      });
+    }
+
+    const kasCard = document.getElementById("homeKasCard");
+    const kasVal = document.getElementById("homeKasVal");
+    if(res.kas.lunas){
+      kasCard.className = "kas-card lunas";
+      kasVal.textContent = "Lunas ✅";
+    } else {
+      kasCard.className = "kas-card menunggak";
+      kasVal.textContent = "-Rp" + res.kas.sisa.toLocaleString("id-ID");
+    }
+
+    document.getElementById("rekapTotal").textContent = res.rekap.total;
+    document.getElementById("rekapHadir").textContent = res.rekap.hadir;
+    document.getElementById("rekapIzin").textContent = res.rekap.izin;
+    document.getElementById("rekapSakit").textContent = res.rekap.sakit;
+  }catch(e){
+    document.getElementById("homeHariIni").textContent = "Gagal memuat data.";
+  }
+}
+
+/* ===================== MUAT KEGIATAN HARI INI (untuk form absensi) ===================== */
 async function loadKegiatanHariIni(){
   const select = document.getElementById("namaKegiatan");
   const infoKosong = document.getElementById("infoKosong");
@@ -563,16 +832,20 @@ document.getElementById("absensiForm").addEventListener("submit", async function
   btnKirim.disabled = true; btnKirim.textContent = 'Mengirim...';
 
   try{
-    await callAPI({
+    const res = await callAPI({
       action:"addAbsensi",
       nama: currentUser.nama,
       departemen: currentUser.departemen,
       tanggal, kegiatan, status, foto
     });
 
+    // jam pengiriman: pakai jam dari server kalau ada, kalau tidak pakai jam lokal perangkat
+    lastJamKirim = (res && res.jam) ? res.jam : new Date().toLocaleTimeString('id-ID', { hour12:false });
+
     const tanggalFormatted = new Date(tanggal + 'T00:00:00').toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
     document.getElementById('summaryBox').innerHTML = `
       <b>Tanggal:</b> ${tanggalFormatted}<br>
+      <b>Jam Pengiriman:</b> ${lastJamKirim} WIB<br>
       <b>Kegiatan:</b> ${kegiatan}<br>
       <b>Departemen:</b> ${currentUser.departemen}<br>
       <b>Nama:</b> ${currentUser.nama}<br>
@@ -606,15 +879,31 @@ document.getElementById('btnReset').addEventListener('click', ()=>{
   goTo('page-absensi');
 });
 
-/* ===================== PANEL ADMIN: KELOLA KEGIATAN ===================== */
-document.getElementById('btnKeAdmin').addEventListener('click', ()=>{ goTo('page-admin'); loadAllKegiatan(); });
-document.getElementById('btnBackAdmin').addEventListener('click', ()=>{ goTo('page-absensi'); loadKegiatanHariIni(); });
+/* ===================== PANEL ADMIN: EDIT (TAB KEGIATAN & KAS) ===================== */
+document.getElementById('btnKeAdminHome').addEventListener('click', ()=>{ goTo('page-admin'); loadAllKegiatan(); });
+document.getElementById('btnBackAdmin').addEventListener('click', ()=>{ goTo('page-home'); loadHomeData(); });
+
+document.getElementById('tabKegiatanBtn').addEventListener('click', ()=>{
+  document.getElementById('tabKegiatanBtn').classList.add('active');
+  document.getElementById('tabKasBtn').classList.remove('active');
+  document.getElementById('tabKegiatan').classList.add('active');
+  document.getElementById('tabKas').classList.remove('active');
+  loadAllKegiatan();
+});
+document.getElementById('tabKasBtn').addEventListener('click', ()=>{
+  document.getElementById('tabKasBtn').classList.add('active');
+  document.getElementById('tabKegiatanBtn').classList.remove('active');
+  document.getElementById('tabKas').classList.add('active');
+  document.getElementById('tabKegiatan').classList.remove('active');
+  loadAllKas();
+});
 
 function formatTanggalAdmin(tgl){
   try{ return new Date(tgl).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }); }
   catch(e){ return tgl; }
 }
 
+/* ---------- KELOLA KEGIATAN ---------- */
 async function loadAllKegiatan(){
   const list = document.getElementById('adminList');
   list.innerHTML = '<div class="info-empty">Memuat daftar kegiatan...</div>';
@@ -678,6 +967,99 @@ document.getElementById('btnSimpanKegiatan').addEventListener('click', async ()=
     document.getElementById('btnSimpanKegiatan').textContent = 'Tambah Kegiatan';
     loadAllKegiatan();
   }catch(e){ alert('Gagal menyimpan kegiatan. Coba lagi.'); }
+  btn.disabled = false;
+});
+
+/* ---------- KELOLA KAS ---------- */
+async function loadAllKas(){
+  const list = document.getElementById('kasList');
+  list.innerHTML = '<div class="info-empty">Memuat data kas...</div>';
+  try{
+    const res = await callAPI({ action:"getAllKas" });
+    const data = (res.data || []).sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
+    if(data.length === 0){
+      list.innerHTML = '<div class="info-empty">Belum ada data kas. Tambahkan lewat form di atas.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    data.forEach(k=>{
+      const div = document.createElement('div');
+      div.className = 'admin-item';
+      div.innerHTML = `
+        <div class="info"><b>${k.namaPengurus} — Rp${Number(k.jumlah).toLocaleString('id-ID')}</b><span>${k.departemen} · ${k.bulan} · ${formatTanggalAdmin(k.tanggal)}</span></div>
+        <div class="acts">
+          <button class="icon-mini edit" data-id="${k.id}" data-dept="${k.departemen}" data-nama="${k.namaPengurus}" data-jumlah="${k.jumlah}" data-bulan="${k.bulan}" data-tanggal="${k.tanggal}">✏️</button>
+          <button class="icon-mini del" data-id="${k.id}">🗑️</button>
+        </div>`;
+      list.appendChild(div);
+    });
+
+    list.querySelectorAll('.icon-mini.edit').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.getElementById('kasEditId').value = btn.dataset.id;
+        document.getElementById('kasDepartemen').value = btn.dataset.dept;
+        updateNamaKas();
+        document.getElementById('kasNamaPengurus').value = btn.dataset.nama;
+        const jumlah = btn.dataset.jumlah;
+        if(jumlah === "15000" || jumlah === "30000"){
+          document.getElementById('kasJumlah').value = jumlah;
+          toggleJumlahLain();
+        } else {
+          document.getElementById('kasJumlah').value = "Lainnya";
+          toggleJumlahLain();
+          document.getElementById('kasJumlahLain').value = jumlah;
+        }
+        document.getElementById('kasBulan').value = btn.dataset.bulan;
+        document.getElementById('kasTanggal').value = btn.dataset.tanggal;
+        document.getElementById('btnSimpanKas').textContent = 'Simpan Perubahan';
+      });
+    });
+    list.querySelectorAll('.icon-mini.del').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        if(!confirm('Hapus data kas ini?')) return;
+        await callAPI({ action:"deleteKas", id: btn.dataset.id });
+        loadAllKas();
+      });
+    });
+  }catch(e){
+    list.innerHTML = '<div class="info-empty">Gagal memuat data. Periksa koneksi.</div>';
+  }
+}
+
+document.getElementById('btnSimpanKas').addEventListener('click', async ()=>{
+  const id = document.getElementById('kasEditId').value;
+  const departemen = document.getElementById('kasDepartemen').value;
+  const namaPengurus = document.getElementById('kasNamaPengurus').value;
+  let jumlah = document.getElementById('kasJumlah').value;
+  if(jumlah === "Lainnya"){
+    jumlah = document.getElementById('kasJumlahLain').value.replace(/[^0-9]/g,"");
+  }
+  const bulan = document.getElementById('kasBulan').value;
+  const tanggal = document.getElementById('kasTanggal').value;
+
+  if(!departemen || !namaPengurus || !jumlah || !bulan || !tanggal){
+    alert('Mohon lengkapi semua data kas.'); return;
+  }
+
+  const btn = document.getElementById('btnSimpanKas');
+  btn.disabled = true;
+  try{
+    if(id){
+      await callAPI({ action:"editKas", id, departemen, namaPengurus, jumlah, bulan, tanggal });
+    } else {
+      await callAPI({ action:"addKas", departemen, namaPengurus, jumlah, bulan, tanggal, dicatatOleh: currentUser ? currentUser.nama : "" });
+    }
+    document.getElementById('kasEditId').value = '';
+    document.getElementById('kasDepartemen').value = '';
+    document.getElementById('kasNamaPengurus').innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
+    document.getElementById('kasNamaPengurus').disabled = true;
+    document.getElementById('kasJumlah').value = '15000';
+    toggleJumlahLain();
+    document.getElementById('kasJumlahLain').value = '';
+    document.getElementById('kasTanggal').value = '';
+    document.getElementById('btnSimpanKas').textContent = 'Tambah Kas';
+    loadAllKas();
+  }catch(e){ alert('Gagal menyimpan data kas. Coba lagi.'); }
   btn.disabled = false;
 });
 
