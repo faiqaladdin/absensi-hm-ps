@@ -23,332 +23,132 @@
     --radius:18px;
     --shadow: 0 20px 45px -20px rgba(11,61,46,0.35);
   }
-
   *{box-sizing:border-box;}
-
   body{
-    margin:0;
-    min-height:100vh;
+    margin:0; min-height:100vh;
     background:
       radial-gradient(circle at 12% -10%, rgba(82,183,136,0.25), transparent 45%),
       radial-gradient(circle at 100% 10%, rgba(201,154,70,0.12), transparent 40%),
       var(--bg);
     font-family:'Plus Jakarta Sans', sans-serif;
     color:var(--ink);
-    display:flex;
-    justify-content:center;
+    display:flex; justify-content:center;
     padding:28px 16px 110px;
   }
+  h1,h2,h3{font-family:'Poppins', sans-serif; margin:0;}
+  .app{width:100%; max-width:480px; display:flex; flex-direction:column; gap:18px;}
 
-  h1,h2,h3{
-    font-family:'Poppins', sans-serif;
-    margin:0;
-  }
+  .steps{display:flex; align-items:center; justify-content:center; gap:10px; padding:4px 0 2px;}
+  .leaf{width:16px; height:16px; border-radius:0 60% 0 60%; background:var(--green-pale); border:1.5px solid var(--green-fresh); transition:all .35s ease;}
+  .leaf.active{background:var(--green-fresh); box-shadow:0 0 0 5px rgba(82,183,136,0.18); transform:scale(1.15);}
+  .leaf.done{background:var(--green-mid); border-color:var(--green-mid);}
 
-  .app{
-    width:100%;
-    max-width:480px;
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-  }
-
-  /* ---------- STEP INDICATOR (leaf motif) ---------- */
-  .steps{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    padding:4px 0 2px;
-  }
-  .leaf{
-    width:16px;
-    height:16px;
-    border-radius:0 60% 0 60%;
-    background:var(--green-pale);
-    border:1.5px solid var(--green-fresh);
-    transition:all .35s ease;
-  }
-  .leaf.active{
-    background:var(--green-fresh);
-    box-shadow:0 0 0 5px rgba(82,183,136,0.18);
-    transform:scale(1.15);
-  }
-  .leaf.done{
-    background:var(--green-mid);
-    border-color:var(--green-mid);
-  }
-  .step-line{
-    font-size:12px;
-    color:var(--ink-soft);
-    text-align:center;
-    font-weight:600;
-    letter-spacing:.02em;
-  }
-
-  /* ---------- CARD / PAGES ---------- */
   .card{
-    background:var(--card);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    padding:32px 26px;
-    display:none;
-    flex-direction:column;
-    gap:6px;
-    animation:rise .45s ease;
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:32px 26px; display:none; flex-direction:column; gap:6px; animation:rise .45s ease;
   }
   .card.active{display:flex;}
+  @keyframes rise{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
 
-  @keyframes rise{
-    from{opacity:0; transform:translateY(14px);}
-    to{opacity:1; transform:translateY(0);}
-  }
-
-  /* ---------- COVER ---------- */
-  #page-cover{
-    align-items:center;
-    text-align:center;
+  #page-cover, #page-login{
+    align-items:center; text-align:center;
     padding:56px 28px 46px;
-    background:
-      linear-gradient(160deg, var(--forest) 0%, var(--green-deep) 55%, var(--green-mid) 100%);
-    color:#fff;
-    position:relative;
-    overflow:hidden;
-    min-height:520px;
-    justify-content:center;
+    background:linear-gradient(160deg, var(--forest) 0%, var(--green-deep) 55%, var(--green-mid) 100%);
+    color:#fff; position:relative; overflow:hidden; min-height:480px; justify-content:center;
   }
-  #page-cover::before{
-    content:"";
-    position:absolute;
-    width:340px; height:340px;
-    border-radius:0 62% 0 62%;
-    border:1.5px solid rgba(255,255,255,0.14);
-    top:-90px; right:-110px;
-  }
-  #page-cover::after{
-    content:"";
-    position:absolute;
-    width:220px; height:220px;
-    border-radius:62% 0 62% 0;
-    border:1.5px solid rgba(255,255,255,0.1);
-    bottom:-70px; left:-70px;
-  }
-  .cover-eyebrow{
-    font-size:13px;
-    letter-spacing:.22em;
-    text-transform:uppercase;
-    color:var(--green-pale);
-    font-weight:600;
-    z-index:1;
-  }
-  .cover-title{
-    font-size:30px;
-    font-weight:800;
-    margin-top:14px;
-    line-height:1.28;
-    z-index:1;
-  }
+  #page-cover::before, #page-login::before{content:""; position:absolute; width:340px; height:340px; border-radius:0 62% 0 62%; border:1.5px solid rgba(255,255,255,0.14); top:-90px; right:-110px;}
+  #page-cover::after, #page-login::after{content:""; position:absolute; width:220px; height:220px; border-radius:62% 0 62% 0; border:1.5px solid rgba(255,255,255,0.1); bottom:-70px; left:-70px;}
+  .cover-eyebrow{font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--green-pale); font-weight:600; z-index:1;}
+  .cover-title{font-size:30px; font-weight:800; margin-top:14px; line-height:1.28; z-index:1;}
   .cover-title span{color:var(--gold);}
-  .cover-sub{
-    margin-top:10px;
-    font-size:15.5px;
-    font-weight:600;
-    color:rgba(255,255,255,0.88);
-    z-index:1;
-  }
-  .cover-tagline{
-    margin-top:22px;
-    font-size:13px;
-    color:var(--green-pale);
-    font-style:italic;
-    z-index:1;
-  }
+  .cover-sub{margin-top:10px; font-size:15.5px; font-weight:600; color:rgba(255,255,255,0.88); z-index:1;}
+  .cover-tagline{margin-top:22px; font-size:13px; color:var(--green-pale); font-style:italic; z-index:1;}
   .btn-start{
-    margin-top:34px;
-    z-index:1;
-    background:var(--gold);
-    color:var(--forest);
-    border:none;
-    font-family:'Poppins',sans-serif;
-    font-weight:700;
-    font-size:15px;
-    padding:14px 34px;
-    border-radius:999px;
-    cursor:pointer;
-    box-shadow:0 10px 24px -8px rgba(201,154,70,0.6);
+    margin-top:34px; z-index:1; background:var(--gold); color:var(--forest); border:none;
+    font-family:'Poppins',sans-serif; font-weight:700; font-size:15px; padding:14px 34px;
+    border-radius:999px; cursor:pointer; box-shadow:0 10px 24px -8px rgba(201,154,70,0.6);
     transition:transform .2s ease, box-shadow .2s ease;
   }
   .btn-start:hover{transform:translateY(-2px); box-shadow:0 14px 28px -8px rgba(201,154,70,0.7);}
 
-  /* ---------- FORM ELEMENTS ---------- */
-  .page-title{
-    font-size:20px;
-    font-weight:700;
-    color:var(--forest);
+  .login-form{ z-index:1; width:100%; margin-top:14px; text-align:left; }
+  .login-form label{ color:var(--green-pale); }
+  .login-form select, .login-form input{
+    background:rgba(255,255,255,0.95);
   }
-  .page-desc{
-    font-size:13.5px;
-    color:var(--ink-soft);
-    margin-top:2px;
-    margin-bottom:18px;
-  }
-  label{
-    font-weight:600;
-    font-size:13.5px;
-    color:var(--green-deep);
-    display:block;
-    margin-top:16px;
-    margin-bottom:6px;
-    letter-spacing:.01em;
-  }
-  select, input[type="date"], input[type="text"]{
-    width:100%;
-    padding:12px 14px;
-    border:1.5px solid #DCEDE3;
-    background:#FBFEFC;
-    border-radius:12px;
-    font-size:14.5px;
-    font-family:'Plus Jakarta Sans', sans-serif;
-    color:var(--ink);
+
+  .page-title{font-size:20px; font-weight:700; color:var(--forest);}
+  .page-desc{font-size:13.5px; color:var(--ink-soft); margin-top:2px; margin-bottom:18px;}
+  label{font-weight:600; font-size:13.5px; color:var(--green-deep); display:block; margin-top:16px; margin-bottom:6px; letter-spacing:.01em;}
+  select, input[type="date"], input[type="text"], input[type="password"]{
+    width:100%; padding:12px 14px; border:1.5px solid #DCEDE3; background:#FBFEFC;
+    border-radius:12px; font-size:14.5px; font-family:'Plus Jakarta Sans', sans-serif; color:var(--ink);
     transition:border-color .2s ease, box-shadow .2s ease;
   }
-  select:focus, input:focus{
-    outline:none;
-    border-color:var(--green-fresh);
-    box-shadow:0 0 0 4px rgba(82,183,136,0.15);
-  }
-  select:disabled{color:#9CB3A8; background:#F3F7F4;}
+  select:focus, input:focus{outline:none; border-color:var(--green-fresh); box-shadow:0 0 0 4px rgba(82,183,136,0.15);}
+  select:disabled, input:disabled{color:#5C7A6C; background:#F3F7F4;}
 
-  .row-btns{
-    display:flex;
-    gap:10px;
-    margin-top:28px;
-  }
+  .row-btns{display:flex; gap:10px; margin-top:28px;}
   button{font-family:'Poppins', sans-serif; cursor:pointer;}
   .btn-primary, .btn-secondary, .btn-submit{
-    flex:1;
-    border:none;
-    padding:13px 10px;
-    border-radius:12px;
-    font-weight:700;
-    font-size:14.5px;
+    flex:1; border:none; padding:13px 10px; border-radius:12px; font-weight:700; font-size:14.5px;
     transition:background .2s ease, transform .2s ease;
   }
-  .btn-primary, .btn-submit{
-    background:var(--green-mid);
-    color:#fff;
-  }
+  .btn-primary, .btn-submit{background:var(--green-mid); color:#fff;}
   .btn-primary:hover, .btn-submit:hover{background:var(--forest); transform:translateY(-1px);}
-  .btn-secondary{
-    background:#EEF6F1;
-    color:var(--green-deep);
-  }
+  .btn-secondary{background:#EEF6F1; color:var(--green-deep);}
   .btn-secondary:hover{background:#E1EEE7;}
 
-  /* ---------- CAMERA ---------- */
   .camera-box{
-    margin-top:10px;
-    background:linear-gradient(180deg,#F3FAF6,#EAF6EE);
-    border:1.5px dashed #A9D9BF;
-    border-radius:14px;
-    padding:14px;
-    text-align:center;
+    margin-top:10px; background:linear-gradient(180deg,#F3FAF6,#EAF6EE);
+    border:1.5px dashed #A9D9BF; border-radius:14px; padding:14px; text-align:center;
   }
-  .camera-hint{
-    font-size:12.5px;
-    color:var(--ink-soft);
-    margin-bottom:10px;
-  }
-  #kamera, #hasilFoto{
-    width:100%;
-    border-radius:10px;
-    background:#0d241b;
-    display:none;
-  }
+  .camera-hint{font-size:12.5px; color:var(--ink-soft); margin-bottom:10px;}
+  #kamera, #hasilFoto{width:100%; border-radius:10px; background:#0d241b; display:none;}
   .btn-cam{
-    width:100%;
-    margin-top:10px;
-    background:var(--forest);
-    color:#fff;
-    border:none;
-    padding:12px;
-    border-radius:10px;
-    font-weight:700;
-    font-size:14px;
+    width:100%; margin-top:10px; background:var(--forest); color:#fff; border:none;
+    padding:12px; border-radius:10px; font-weight:700; font-size:14px;
   }
   .btn-cam:hover{background:#092c20;}
   .btn-cam.retake{background:var(--danger);}
-  .cam-status{
-    font-size:12px;
-    color:var(--green-deep);
-    font-weight:600;
-    margin-top:8px;
-    display:none;
-  }
+  .cam-status{font-size:12px; color:var(--green-deep); font-weight:600; margin-top:8px; display:none;}
 
-  .error-text{
-    color:var(--danger);
-    font-size:12.5px;
-    font-weight:600;
-    margin-top:10px;
-    display:none;
-  }
+  .error-text{color:var(--danger); font-size:12.5px; font-weight:600; margin-top:10px; display:none;}
 
-  /* ---------- SUCCESS PAGE ---------- */
-  #page-success{
-    text-align:center;
-    align-items:center;
-    padding:44px 26px;
-  }
-  .success-badge{
-    width:64px; height:64px;
-    border-radius:0 55% 0 55%;
-    background:var(--green-pale);
-    display:flex; align-items:center; justify-content:center;
-    margin-bottom:16px;
-  }
+  #page-success{text-align:center; align-items:center; padding:44px 26px;}
+  .success-badge{width:64px; height:64px; border-radius:0 55% 0 55%; background:var(--green-pale); display:flex; align-items:center; justify-content:center; margin-bottom:16px;}
   .success-badge svg{width:30px; height:30px;}
-  .summary{
-    width:100%;
-    text-align:left;
-    background:#F7FCF9;
-    border:1px solid #E1F1E7;
-    border-radius:14px;
-    padding:16px 18px;
-    margin-top:18px;
-    font-size:13.5px;
-    line-height:1.9;
-  }
+  .summary{width:100%; text-align:left; background:#F7FCF9; border:1px solid #E1F1E7; border-radius:14px; padding:16px 18px; margin-top:18px; font-size:13.5px; line-height:1.9;}
   .summary b{color:var(--forest);}
-  .summary-photo{
-    width:100%;
-    border-radius:10px;
-    margin-top:12px;
+  .summary-photo{width:100%; border-radius:10px; margin-top:12px;}
+
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;}
+  .topbar .who b{display:block; font-size:14.5px; color:var(--forest);}
+  .topbar .who span{font-size:11.5px; color:var(--ink-soft);}
+  .topbar .btns{display:flex; gap:6px;}
+  .chip-btn{
+    border:none; background:var(--green-pale); color:var(--green-deep);
+    font-size:11.5px; font-weight:700; padding:8px 10px; border-radius:10px; cursor:pointer;
+  }
+  .chip-btn.logout{background:#FCE4E1; color:var(--danger);}
+
+  .info-empty{
+    background:#FEF6E8; border:1.5px dashed var(--gold); border-radius:14px;
+    padding:14px; font-size:12.5px; color:var(--green-deep); margin-top:10px; text-align:center;
   }
 
-  /* ---------- WATERMARK FOOTER ---------- */
-  .watermark{
-    position:fixed;
-    left:0; right:0; bottom:0;
-    background:linear-gradient(180deg, rgba(11,61,46,0) 0%, rgba(11,61,46,0.97) 32%);
-    color:rgba(255,255,255,0.92);
-    text-align:center;
-    padding:22px 16px 12px;
-    font-size:11px;
-    line-height:1.75;
-    letter-spacing:.02em;
-    pointer-events:none;
-    z-index:50;
+  .admin-list{margin-top:16px; display:flex; flex-direction:column; gap:8px;}
+  .admin-item{
+    display:flex; align-items:center; gap:10px; background:#FBFEFC; border:1px solid #E1F1E7;
+    border-radius:12px; padding:10px 12px;
   }
-  .watermark strong{
-    color:var(--green-pale);
-    font-weight:700;
-    letter-spacing:.05em;
-  }
-  .watermark .tagline{
-    color:var(--gold);
-    font-style:italic;
-  }
+  .admin-item .info{flex:1;}
+  .admin-item .info b{font-size:13.5px; display:block;}
+  .admin-item .info span{font-size:11.5px; color:var(--ink-soft);}
+  .admin-item .acts{display:flex; gap:6px;}
+  .icon-mini{border:none; border-radius:8px; width:30px; height:30px; font-size:14px; cursor:pointer;}
+  .icon-mini.edit{background:var(--green-pale); color:var(--green-deep);}
+  .icon-mini.del{background:#FCE4E1; color:var(--danger);}
 
   @media (max-width:400px){
     .card{padding:26px 18px;}
@@ -375,44 +175,15 @@
     <button class="btn-start" id="btnMulai">Mulai Absensi →</button>
   </section>
 
-  <!-- ============ PAGE 1: INFO KEGIATAN ============ -->
-  <section class="card" id="page-info">
-    <div class="page-title">Informasi Kegiatan</div>
-    <div class="page-desc">Lengkapi tanggal dan jenis kegiatan sebelum mengisi kehadiran.</div>
+  <!-- ============ LOGIN ============ -->
+  <section class="card" id="page-login">
+    <div class="cover-eyebrow">Masuk Akun</div>
+    <h1 class="cover-title" style="font-size:24px;">Login Pengurus</h1>
+    <div class="cover-sub">Isi data berikut untuk melanjutkan absensi.</div>
 
-    <label for="tanggal">Tanggal Kegiatan</label>
-    <input type="date" id="tanggal" required>
-
-    <label for="jenisKegiatan">Jenis Kegiatan</label>
-    <select id="jenisKegiatan" required onchange="toggleKegiatanLain()">
-      <option value="">-- Pilih Jenis Kegiatan --</option>
-      <option value="Rapat Bulanan">Rapat Bulanan</option>
-      <option value="Acara HM-PS">Acara HM-PS</option>
-      <option value="Rapat Departemen">Rapat Departemen</option>
-      <option value="Lainnya">Lainnya</option>
-    </select>
-
-    <div id="wrapKegiatanLain" style="display:none;">
-      <label for="kegiatanLain">Sebutkan Kegiatan</label>
-      <input type="text" id="kegiatanLain" placeholder="Contoh: Diskusi Panel Pendidikan">
-    </div>
-
-    <p class="error-text" id="errInfo">Mohon lengkapi tanggal dan jenis kegiatan.</p>
-
-    <div class="row-btns">
-      <button type="button" class="btn-secondary" id="btnBackCover">Kembali</button>
-      <button type="button" class="btn-primary" id="btnNextInfo">Lanjut →</button>
-    </div>
-  </section>
-
-  <!-- ============ PAGE 2: DATA KEHADIRAN ============ -->
-  <section class="card" id="page-form">
-    <div class="page-title">Data Kehadiran</div>
-    <div class="page-desc">Isi data diri dan ambil foto sebagai bukti kehadiran.</div>
-
-    <form id="absensiForm">
-      <label for="departemen">Pilih Jabatan / Departemen</label>
-      <select id="departemen" onchange="updateNama()" required>
+    <div class="login-form">
+      <label for="loginDepartemen">Nama Departemen</label>
+      <select id="loginDepartemen" onchange="updateNamaLogin()">
         <option value="">-- Pilih Departemen --</option>
         <option value="BPH">Badan Pengurus Harian (BPH)</option>
         <option value="Pendidikan dan Intelektual">Departemen Pendidikan dan Intelektual</option>
@@ -422,13 +193,49 @@
         <option value="Ecopreneurship">Departemen Ecopreneurship</option>
       </select>
 
-      <label for="nama">Pilih Nama Lengkap</label>
-      <select id="nama" required disabled>
+      <label for="loginNama">Nama Lengkap</label>
+      <select id="loginNama" disabled>
         <option value="">-- Pilih Departemen Terlebih Dahulu --</option>
       </select>
 
+      <label for="loginSandi">Kata Sandi</label>
+      <input type="password" id="loginSandi" placeholder="Masukkan kode sandi kamu" inputmode="numeric">
+    </div>
+
+    <button class="btn-start" id="btnLogin" style="margin-top:22px;">Masuk</button>
+    <p class="error-text" id="errLogin" style="color:#FFD3CE;">Data tidak ditemukan.</p>
+  </section>
+
+  <!-- ============ PAGE ABSENSI ============ -->
+  <section class="card" id="page-absensi">
+    <div class="topbar">
+      <div class="who">
+        <b id="whoNama">-</b>
+        <span id="whoDept">-</span>
+      </div>
+      <div class="btns">
+        <button class="chip-btn" id="btnKeAdmin" style="display:none;">⚙ Kelola Kegiatan</button>
+        <button class="chip-btn logout" id="btnLogout">Keluar</button>
+      </div>
+    </div>
+
+    <div class="page-title" style="margin-top:14px;">Absensi Kegiatan</div>
+    <div class="page-desc">Isi kehadiranmu untuk kegiatan hari ini.</div>
+
+    <form id="absensiForm">
+      <label for="tanggal">Tanggal Kegiatan</label>
+      <input type="date" id="tanggal" disabled>
+
+      <label for="namaKegiatan">Nama Kegiatan</label>
+      <select id="namaKegiatan" required>
+        <option value="">-- Memuat kegiatan hari ini... --</option>
+      </select>
+      <div class="info-empty" id="infoKosong" style="display:none;">
+        Belum ada kegiatan yang ditambahkan admin untuk hari ini. Silakan hubungi Eliza Cahya, Nur'aini Zakiah, atau M. Faiq Difa Al Din.
+      </div>
+
       <label for="status">Status Kehadiran</label>
-      <select id="status" required onchange="toggleBuktiKehadiran()">
+      <select id="status" onchange="toggleBuktiKehadiran()">
         <option value="Hadir">Hadir</option>
         <option value="Izin">Izin</option>
         <option value="Sakit">Sakit</option>
@@ -461,10 +268,32 @@
       <p id="kirimStatus" style="font-size:13px; font-weight:700; margin-top:10px; display:none;"></p>
 
       <div class="row-btns">
-        <button type="button" class="btn-secondary" id="btnBackInfo">Kembali</button>
         <button type="submit" class="btn-submit" id="btnKirim">Kirim Kehadiran</button>
       </div>
     </form>
+  </section>
+
+  <!-- ============ ADMIN: KELOLA KEGIATAN ============ -->
+  <section class="card" id="page-admin">
+    <div class="page-title">Kelola Kegiatan ⚙️</div>
+    <div class="page-desc">Tambah, ubah, atau hapus kegiatan yang tampil di halaman absensi.</div>
+
+    <label for="admNama">Nama Kegiatan</label>
+    <input type="text" id="admNama" placeholder="cth. Rapat Bulanan Kabinet">
+
+    <label for="admTanggal">Tanggal Kegiatan</label>
+    <input type="date" id="admTanggal">
+
+    <input type="hidden" id="admEditId" value="">
+    <button type="button" class="btn-submit" id="btnSimpanKegiatan" style="margin-top:18px;">Tambah Kegiatan</button>
+
+    <div class="admin-list" id="adminList">
+      <div class="info-empty">Memuat daftar kegiatan...</div>
+    </div>
+
+    <div class="row-btns" style="margin-top:20px;">
+      <button type="button" class="btn-secondary" id="btnBackAdmin">← Kembali ke Absensi</button>
+    </div>
   </section>
 
   <!-- ============ SUCCESS ============ -->
@@ -479,124 +308,66 @@
     <img id="summaryPhoto" class="summary-photo" alt="Bukti Foto">
 
     <div class="row-btns" style="margin-top:22px;">
-      <button type="button" class="btn-primary" id="btnReset" style="flex:1;">Isi Absensi Baru</button>
+      <button type="button" class="btn-primary" id="btnReset" style="flex:1;">Isi Absensi Lagi</button>
     </div>
   </section>
 
 </div>
 
-<div class="watermark">
+<div class="watermark" style="position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg, rgba(11,61,46,0) 0%, rgba(11,61,46,0.97) 32%);color:rgba(255,255,255,0.92);text-align:center;padding:22px 16px 12px;font-size:11px;line-height:1.75;letter-spacing:.02em;pointer-events:none;z-index:50;">
   #kabinetadhikara<br>
-  <span class="tagline">Σ Bertumbuh bersama, SIGMA berkarya Σ</span><br>
-  <strong>Official Accounts of HM-PS PMAT UIN SUKA</strong><br>
-  ⌕ Instagram: @hmps_uinsukapmat &nbsp;|&nbsp; ⌕ E-mail: uinsukapmat@gmail.com<br>
-  ⌕ YouTube: Pmat Uinsuka &nbsp;|&nbsp; ⌕ TikTok: pmatuinsuka<br>
-  ⌕ Web: hmpspmat.uin-suka.ac.id
+  <span style="color:#C99A46;font-style:italic;">Σ Bertumbuh bersama, SIGMA berkarya Σ</span><br>
+  <strong style="color:#D8F0E3;">Official Accounts of HM-PS PMAT UIN SUKA</strong><br>
+  ⌕ Instagram: @hmps_uinsukapmat &nbsp;|&nbsp; ⌕ E-mail: uinsukapmat@gmail.com
 </div>
 
 <script>
-/* ===================== NAVIGASI ANTAR HALAMAN ===================== */
-const pages = ["page-cover","page-info","page-form","page-success"];
-const leaves = document.querySelectorAll('.leaf');
+/* =====================================================================
+   KONFIGURASI PENTING — ganti dengan URL Web App Google Apps Script kamu
+   ===================================================================== */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxd3q1R3SYCfMkoVIKPrEA3K8cDvb3yL-o2yNIt8R-mb5zi3aMc96x32l7xLJxUA0EsAw/exec";
 
+async function callAPI(payload){
+  const res = await fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" }, // hindari CORS preflight
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+/* ===================== NAVIGASI ANTAR HALAMAN ===================== */
+const pages = ["page-cover","page-login","page-absensi","page-admin","page-success"];
 function goTo(pageId){
   pages.forEach(p => document.getElementById(p).classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
-
-  // update step indicator (hide on cover & success, show for info/form)
-  const stepMap = {"page-cover":0, "page-info":1, "page-form":2, "page-success":3};
-  const current = stepMap[pageId];
-  document.getElementById('stepsIndicator').style.visibility = (pageId === 'page-cover') ? 'hidden' : 'visible';
-  leaves.forEach(leaf=>{
-    const s = parseInt(leaf.dataset.step);
-    leaf.classList.remove('active','done');
-    if(s < current) leaf.classList.add('done');
-    if(s === current) leaf.classList.add('active');
-  });
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-document.getElementById('btnMulai').addEventListener('click', ()=>{
-  // default tanggal ke hari ini
-  const t = document.getElementById('tanggal');
-  if(!t.value){
-    const today = new Date();
-    const iso = today.toISOString().split('T')[0];
-    t.value = iso;
-  }
-  goTo('page-info');
-});
+let currentUser = null; // {nama, departemen, jabatan, role}
 
-document.getElementById('btnBackCover').addEventListener('click', ()=> goTo('page-cover'));
-document.getElementById('btnBackInfo').addEventListener('click', ()=> goTo('page-info'));
+document.getElementById('btnMulai').addEventListener('click', ()=> goTo('page-login'));
 
-function toggleKegiatanLain(){
-  const val = document.getElementById('jenisKegiatan').value;
-  const needsDetail = (val === 'Lainnya' || val === 'Acara HM-PS');
-  document.getElementById('wrapKegiatanLain').style.display = needsDetail ? 'block' : 'none';
-  document.getElementById('kegiatanLain').placeholder = (val === 'Acara HM-PS')
-    ? 'Contoh: Malam Keakraban Mahasiswa'
-    : 'Contoh: Diskusi Panel Pendidikan';
-}
-
-document.getElementById('btnNextInfo').addEventListener('click', ()=>{
-  const tanggal = document.getElementById('tanggal').value;
-  const jenis = document.getElementById('jenisKegiatan').value;
-  const lain = document.getElementById('kegiatanLain').value;
-  const err = document.getElementById('errInfo');
-  const needsDetail = (jenis === 'Lainnya' || jenis === 'Acara HM-PS');
-
-  if(!tanggal || !jenis || (needsDetail && !lain.trim())){
-    err.style.display = 'block';
-    return;
-  }
-  err.style.display = 'none';
-  goTo('page-form');
-});
-
-/* ===================== DATA NAMA PER DEPARTEMEN ===================== */
+/* ===================== DATA NAMA PER DEPARTEMEN (untuk dropdown login) ===================== */
 const dataPengurus = {
-  "BPH": [
-    "Eliza Cahya Nur Fitriani","Nabila Putri Fanisha","Nur'aini Zakiah",
-    "Dinda Tri Hapsari","Juwairiyah Miftakhul Jannah","Cinta Syaifa Azzahra"
-  ],
-  "Pendidikan dan Intelektual": [
-    "Firdasari Andarayogi","Nita Maharani","Khoirun Nisa' Cipta Tsany",
-    "Nency Surya Andini","Elia Mu'shoda","Azizun Niswah",
-    "Meylani Seviasti","Ahmad Muzaki Zulkarnain"
-  ],
-  "Kajian Aksi Strategi": [
-    "Nuryatul Salwa Qolbiyah","Tasya Khairunnisa","Ari Wicaksono",
-    "Novi Lilis Widiayanti","Miftahul Fathma Fitriani","Hafidz Azka Ramadhan","Hasan Abdul Syukur"
-  ],
-  "Minat dan Bakat": [
-    "Abdullah Nashif Nashiruddin","Faizal Anam Nurul Kawakib","Nauval Adhya Angri",
-    "Dima Iqbal Firdaus","Sasikirana Sekarini","Mohamad Ali Ramadhan","Fharid Fadillah"
-  ],
-  "Media dan Informasi": [
-    "Nisrina Ambar Ulayya Harun","Nisa Hidayati","Lubna Alifatul Mardhiyah",
-    "M. Faiq Difa Al Din","Ibnaty Rafifahasyla","Endah Novalien Renata"
-  ],
-  "Ecopreneurship": [
-    "Zaira Anjani Rahmat Dina","Muhammad Rizki","Assa Aulya Qodrati",
-    "Roydhatul Intan Widuri","Salsabila Cahyaningtyas","Zahra Tri Indriyani","Muhammad Faiq Akbar Rhamzani"
-  ]
+  "BPH": ["Eliza Cahya Nur Fitriani","Nabila Putri Fanisha","Nur'aini Zakiah","Dinda Tri Hapsari","Juwairiyah Miftakhul Jannah","Cinta Syaifa Azzahra"],
+  "Pendidikan dan Intelektual": ["Firdasari Andarayogi","Nita Maharani","Khoirun Nisa' Cipta Tsany","Nency Surya Andini","Elia Mu'shoda","Azizun Niswah","Meylani Seviasti","Ahmad Muzaki Zulkarnain"],
+  "Kajian Aksi Strategi": ["Nuryatul Salwa Qolbiyah","Tasya Khairunnisa","Ari Wicaksono","Novi Lilis Widiayanti","Miftahul Fathma Fitriani","Hafidz Azka Ramadhan","Hasan Abdul Syukur"],
+  "Minat dan Bakat": ["Abdullah Nashif Nashiruddin","Faizal Anam Nurul Kawakib","Nauval Adhya Angri","Dima Iqbal Firdaus","Sasikirana Sekarini","Mohamad Ali Ramadhan","Fahrid Fadillah"],
+  "Media dan Informasi": ["Nisrina Ambar Ulayya Harun","Nisa Hidayati","Lubna Alifatul Mardhiyah","M. Faiq Difa Al Din","Ibnaty Rafifahasyla","Endah Novalien Renata"],
+  "Ecopreneurship": ["Zaira Anjani Rahmat Dina","Muhammad Rizki","Assa Aulya Qodrati","Roydhatul Intan Widuri","Salsabila Cahyaningtiyas","Zahra Tri Indriyani","Muhammad Faiq Akbar Rhamzani"]
 };
 
-function updateNama(){
-  const departemenSelect = document.getElementById("departemen");
-  const namaSelect = document.getElementById("nama");
-  const selectedDept = departemenSelect.value;
-
+function updateNamaLogin(){
+  const dept = document.getElementById("loginDepartemen").value;
+  const namaSelect = document.getElementById("loginNama");
   namaSelect.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
-
-  if(selectedDept && dataPengurus[selectedDept]){
+  if(dept && dataPengurus[dept]){
     namaSelect.disabled = false;
-    dataPengurus[selectedDept].forEach(nama=>{
-      const option = document.createElement("option");
-      option.value = nama;
-      option.textContent = nama;
-      namaSelect.appendChild(option);
+    dataPengurus[dept].forEach(nama=>{
+      const opt = document.createElement("option");
+      opt.value = nama; opt.textContent = nama;
+      namaSelect.appendChild(opt);
     });
   } else {
     namaSelect.disabled = true;
@@ -604,7 +375,82 @@ function updateNama(){
   }
 }
 
-/* ===================== LOGIKA KAMERA (OPT-IN, DEPAN) ===================== */
+/* ===================== LOGIN ===================== */
+document.getElementById("btnLogin").addEventListener("click", async ()=>{
+  const departemen = document.getElementById("loginDepartemen").value;
+  const nama = document.getElementById("loginNama").value;
+  const sandi = document.getElementById("loginSandi").value;
+  const err = document.getElementById("errLogin");
+  err.style.display = "none";
+
+  if(!departemen || !nama || !sandi){
+    err.textContent = "Mohon lengkapi departemen, nama, dan kata sandi.";
+    err.style.display = "block";
+    return;
+  }
+  const btn = document.getElementById("btnLogin");
+  btn.disabled = true; btn.textContent = "Memeriksa...";
+  try{
+    const res = await callAPI({ action:"login", departemen, nama, sandi });
+    if(res.status === "success"){
+      currentUser = { nama: res.nama, departemen: res.departemen, jabatan: res.jabatan, role: res.role };
+      document.getElementById("whoNama").textContent = currentUser.nama;
+      document.getElementById("whoDept").textContent = currentUser.jabatan ? (currentUser.departemen + " · " + currentUser.jabatan) : currentUser.departemen;
+      document.getElementById("btnKeAdmin").style.display = (currentUser.role === "Admin") ? "inline-block" : "none";
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById("tanggal").value = today;
+
+      goTo("page-absensi");
+      loadKegiatanHariIni();
+    } else {
+      err.textContent = res.message || "Data tidak ditemukan.";
+      err.style.display = "block";
+    }
+  }catch(e){
+    err.textContent = "Gagal terhubung ke server. Periksa SCRIPT_URL & koneksi internet.";
+    err.style.display = "block";
+  }
+  btn.disabled = false; btn.textContent = "Masuk";
+});
+
+document.getElementById("btnLogout").addEventListener("click", ()=>{
+  currentUser = null;
+  document.getElementById("loginDepartemen").value = "";
+  document.getElementById("loginNama").innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
+  document.getElementById("loginNama").disabled = true;
+  document.getElementById("loginSandi").value = "";
+  goTo("page-cover");
+});
+
+/* ===================== MUAT KEGIATAN HARI INI ===================== */
+async function loadKegiatanHariIni(){
+  const select = document.getElementById("namaKegiatan");
+  const infoKosong = document.getElementById("infoKosong");
+  select.innerHTML = '<option value="">-- Memuat kegiatan hari ini... --</option>';
+  infoKosong.style.display = "none";
+
+  const tanggal = document.getElementById("tanggal").value;
+  try{
+    const res = await callAPI({ action:"getKegiatanHariIni", tanggal });
+    const data = res.data || [];
+    if(data.length === 0){
+      select.innerHTML = '<option value="">-- Belum ada kegiatan --</option>';
+      infoKosong.style.display = "block";
+    } else {
+      select.innerHTML = '<option value="">-- Pilih Kegiatan --</option>';
+      data.forEach(k=>{
+        const opt = document.createElement("option");
+        opt.value = k.nama; opt.textContent = k.nama;
+        select.appendChild(opt);
+      });
+    }
+  }catch(e){
+    select.innerHTML = '<option value="">-- Gagal memuat kegiatan --</option>';
+  }
+}
+
+/* ===================== LOGIKA KAMERA ===================== */
 const video = document.getElementById('kamera');
 const canvas = document.getElementById('canvas');
 const hasilFoto = document.getElementById('hasilFoto');
@@ -612,22 +458,15 @@ const btnAktifkanKamera = document.getElementById('btnAktifkanKamera');
 const btnAmbilFoto = document.getElementById('btnAmbilFoto');
 const fotoData = document.getElementById('fotoData');
 const camStatus = document.getElementById('camStatus');
-
 let stream = null;
 let isCaptured = false;
 
 btnAktifkanKamera.addEventListener('click', async ()=>{
-  if(stream){
-    // kamera sudah aktif, jangan minta izin dua kali
-    return;
-  }
+  if(stream) return;
   camStatus.style.display = 'block';
   camStatus.textContent = 'Meminta izin kamera...';
   try{
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user" },
-      audio: false
-    });
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
     video.srcObject = stream;
     video.style.display = 'block';
     btnAktifkanKamera.style.display = 'none';
@@ -635,7 +474,6 @@ btnAktifkanKamera.addEventListener('click', async ()=>{
     camStatus.textContent = 'Kamera depan aktif. Posisikan wajah Anda, lalu tekan "Ambil Foto".';
   }catch(err){
     camStatus.textContent = 'Kamera tidak dapat diakses. Pastikan izin kamera sudah diberikan pada browser.';
-    console.error("Error Kamera: ", err);
   }
 });
 
@@ -645,11 +483,9 @@ btnAmbilFoto.addEventListener('click', ()=>{
     canvas.width = video.videoWidth || 480;
     canvas.height = video.videoHeight || 360;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
     const imageData = canvas.toDataURL('image/png');
     hasilFoto.src = imageData;
     fotoData.value = imageData;
-
     hasilFoto.style.display = 'block';
     video.style.display = 'none';
     btnAmbilFoto.textContent = 'Foto Ulang';
@@ -668,13 +504,10 @@ btnAmbilFoto.addEventListener('click', ()=>{
 });
 
 function stopKamera(){
-  if(stream){
-    stream.getTracks().forEach(track => track.stop());
-    stream = null;
-  }
+  if(stream){ stream.getTracks().forEach(track => track.stop()); stream = null; }
 }
 
-/* ===================== TOGGLE BUKTI: FOTO (SELALU) + AJUKAN IZIN (Izin/Sakit) ===================== */
+/* ===================== TOGGLE BUKTI: FOTO + IZIN ===================== */
 const btnAjukanIzin = document.getElementById('btnAjukanIzin');
 const izinStatus = document.getElementById('izinStatus');
 const cameraHint = document.getElementById('cameraHint');
@@ -683,10 +516,7 @@ let izinDiklik = false;
 function toggleBuktiKehadiran(){
   const status = document.getElementById('status').value;
   const wrapIzin = document.getElementById('wrapIzin');
-
-  // Kamera/foto WAJIB untuk semua status (Hadir, Izin, maupun Sakit)
   document.getElementById('wrapKamera').style.display = 'block';
-
   if(status === 'Hadir'){
     wrapIzin.style.display = 'none';
     cameraHint.textContent = 'Gunakan kamera depan untuk mengambil foto wajah sebagai bukti kehadiran.';
@@ -703,136 +533,156 @@ btnAjukanIzin.addEventListener('click', ()=>{
   izinStatus.textContent = '✅ Kamu sudah mengajukan izin lewat chat. Pastikan foto di atas juga sudah diambil, lalu lanjutkan kirim kehadiran.';
 });
 
-/* ===================== KIRIM KE GOOGLE SHEETS (GOOGLE APPS SCRIPT) ===================== */
-// GANTI TULISAN DI BAWAH INI DENGAN URL GOOGLE APPS SCRIPT KAMU!
-const scriptURL = 'https://script.google.com/macros/s/AKfycbwX55ZZhyAjg_RUxHNEJQCK_P5Z3lPh09WL7ced4AEGmk3oWzpdAwDCj1nx8HZJXiGd/exec';
-
-document.getElementById("absensiForm").addEventListener("submit", function(e){
+/* ===================== KIRIM ABSENSI ===================== */
+document.getElementById("absensiForm").addEventListener("submit", async function(e){
   e.preventDefault();
-
   const tanggal = document.getElementById("tanggal").value;
-  let jenisKegiatan = document.getElementById("jenisKegiatan").value;
-  const kegiatanLain = document.getElementById("kegiatanLain").value;
-  if(jenisKegiatan === 'Lainnya' && kegiatanLain.trim()){
-    jenisKegiatan = kegiatanLain.trim();
-  } else if(jenisKegiatan === 'Acara HM-PS' && kegiatanLain.trim()){
-    jenisKegiatan = `Acara HM-PS - ${kegiatanLain.trim()}`;
-  }
-
-  const dept = document.getElementById("departemen").value;
-  const nama = document.getElementById("nama").value;
+  const kegiatan = document.getElementById("namaKegiatan").value;
   const status = document.getElementById("status").value;
   const foto = document.getElementById("fotoData").value;
   const err = document.getElementById("errForm");
   const kirimStatus = document.getElementById("kirimStatus");
   const btnKirim = document.getElementById("btnKirim");
 
-  // Foto SELALU wajib. Untuk Izin/Sakit, klik "Ajukan Izin ke Chat" juga wajib.
   const buktiFotoValid = !!foto;
   const buktiIzinValid = (status === 'Hadir') ? true : izinDiklik;
 
-  if(!dept || !nama || !status || !buktiFotoValid || !buktiIzinValid){
-    if(!buktiFotoValid){
-      err.textContent = 'Mohon lengkapi semua data dan ambil foto terlebih dahulu.';
-    } else if(!buktiIzinValid){
-      err.textContent = 'Mohon klik "Ajukan Izin ke Chat" terlebih dahulu.';
-    } else {
-      err.textContent = 'Mohon lengkapi semua data terlebih dahulu.';
-    }
+  if(!kegiatan || !buktiFotoValid || !buktiIzinValid){
+    if(!kegiatan) err.textContent = 'Mohon pilih nama kegiatan terlebih dahulu.';
+    else if(!buktiFotoValid) err.textContent = 'Mohon ambil foto terlebih dahulu.';
+    else err.textContent = 'Mohon klik "Ajukan Izin ke Chat" terlebih dahulu.';
     err.style.display = 'block';
     kirimStatus.style.display = 'none';
     return;
   }
   err.style.display = 'none';
 
-  const tanggalFormatted = new Date(tanggal + 'T00:00:00').toLocaleDateString('id-ID', {
-    weekday:'long', year:'numeric', month:'long', day:'numeric'
-  });
-
-  // Tampilkan status loading (orange) sambil data dikirim
   kirimStatus.style.display = 'block';
   kirimStatus.style.color = '#f39c12';
-  kirimStatus.textContent = `Sedang mengirim data absensi ${nama}... Mohon tunggu.`;
-  btnKirim.disabled = true;
-  btnKirim.textContent = 'Mengirim...';
+  kirimStatus.textContent = `Sedang mengirim data absensi ${currentUser.nama}... Mohon tunggu.`;
+  btnKirim.disabled = true; btnKirim.textContent = 'Mengirim...';
 
-  fetch(scriptURL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      tanggal: tanggal,
-      kegiatan: jenisKegiatan,
-      departemen: dept,
-      nama: nama,
-      status: status,
-      foto: foto
-    })
-  })
-  .then(response => {
-    kirimStatus.style.color = '#27ae60';
-    kirimStatus.textContent = `Absensi ${nama} (${dept}) berhasil dikirim ke Google Sheets!`;
+  try{
+    await callAPI({
+      action:"addAbsensi",
+      nama: currentUser.nama,
+      departemen: currentUser.departemen,
+      tanggal, kegiatan, status, foto
+    });
 
-    // Siapkan ringkasan untuk halaman sukses
+    const tanggalFormatted = new Date(tanggal + 'T00:00:00').toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
     document.getElementById('summaryBox').innerHTML = `
       <b>Tanggal:</b> ${tanggalFormatted}<br>
-      <b>Kegiatan:</b> ${jenisKegiatan}<br>
-      <b>Departemen:</b> ${dept}<br>
-      <b>Nama:</b> ${nama}<br>
+      <b>Kegiatan:</b> ${kegiatan}<br>
+      <b>Departemen:</b> ${currentUser.departemen}<br>
+      <b>Nama:</b> ${currentUser.nama}<br>
       <b>Status:</b> ${status}
-      ${status !== 'Hadir' ? '<br><b>Keterangan:</b> Sudah mengajukan izin lewat chat & foto wajah terlampir' : ''}
-    `;
-    // Foto selalu ada (wajib untuk semua status), jadi selalu ditampilkan
-    const summaryPhoto = document.getElementById('summaryPhoto');
-    summaryPhoto.src = foto;
-    summaryPhoto.style.display = 'block';
+      ${status !== 'Hadir' ? '<br><b>Keterangan:</b> Sudah mengajukan izin lewat chat & foto wajah terlampir' : ''}`;
+    document.getElementById('summaryPhoto').src = foto;
+    document.getElementById('summaryPhoto').style.display = 'block';
 
     stopKamera();
-    btnKirim.disabled = false;
-    btnKirim.textContent = 'Kirim Kehadiran';
     goTo('page-success');
-  })
-  .catch(error => {
+  }catch(error){
     kirimStatus.style.color = '#e74c3c';
-    kirimStatus.textContent = `Gagal mengirim absensi! Periksa koneksi internet, lalu coba lagi.`;
-    btnKirim.disabled = false;
-    btnKirim.textContent = 'Kirim Kehadiran';
-    console.error('Error!', error.message);
-  });
+    kirimStatus.textContent = 'Gagal mengirim absensi! Periksa koneksi internet, lalu coba lagi.';
+  }
+  btnKirim.disabled = false; btnKirim.textContent = 'Kirim Kehadiran';
 });
 
-/* ===================== RESET UNTUK PENGISIAN BARU ===================== */
 document.getElementById('btnReset').addEventListener('click', ()=>{
   document.getElementById('absensiForm').reset();
-  document.getElementById('departemen').dispatchEvent(new Event('change'));
-  document.getElementById('nama').innerHTML = '<option value="">-- Pilih Departemen Terlebih Dahulu --</option>';
-  document.getElementById('nama').disabled = true;
-
-  hasilFoto.style.display = 'none';
-  hasilFoto.src = '';
-  video.style.display = 'none';
-  fotoData.value = '';
-  isCaptured = false;
-  btnAmbilFoto.textContent = 'Ambil Foto';
-  btnAmbilFoto.classList.remove('retake');
-  btnAmbilFoto.style.display = 'none';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('tanggal').value = today;
+  hasilFoto.style.display = 'none'; hasilFoto.src = '';
+  video.style.display = 'none'; fotoData.value = ''; isCaptured = false;
+  btnAmbilFoto.textContent = 'Ambil Foto'; btnAmbilFoto.classList.remove('retake'); btnAmbilFoto.style.display = 'none';
   btnAktifkanKamera.style.display = 'block';
-  camStatus.style.display = 'none';
-  camStatus.textContent = '';
-
-  document.getElementById('jenisKegiatan').value = '';
-  document.getElementById('kegiatanLain').value = '';
-  document.getElementById('wrapKegiatanLain').style.display = 'none';
-  document.getElementById('tanggal').value = '';
-
-  izinDiklik = false;
-  izinStatus.style.color = '';
-  izinStatus.textContent = 'Belum mengajukan izin. Klik tombol di atas.';
+  camStatus.style.display = 'none'; camStatus.textContent = '';
+  izinDiklik = false; izinStatus.style.color = ''; izinStatus.textContent = 'Belum mengajukan izin. Klik tombol di atas.';
   document.getElementById('status').value = 'Hadir';
   toggleBuktiKehadiran();
-
-  goTo('page-cover');
+  loadKegiatanHariIni();
+  goTo('page-absensi');
 });
+
+/* ===================== PANEL ADMIN: KELOLA KEGIATAN ===================== */
+document.getElementById('btnKeAdmin').addEventListener('click', ()=>{ goTo('page-admin'); loadAllKegiatan(); });
+document.getElementById('btnBackAdmin').addEventListener('click', ()=>{ goTo('page-absensi'); loadKegiatanHariIni(); });
+
+function formatTanggalAdmin(tgl){
+  try{ return new Date(tgl).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }); }
+  catch(e){ return tgl; }
+}
+
+async function loadAllKegiatan(){
+  const list = document.getElementById('adminList');
+  list.innerHTML = '<div class="info-empty">Memuat daftar kegiatan...</div>';
+  try{
+    const res = await callAPI({ action:"getAllKegiatan" });
+    const data = (res.data || []).sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
+    if(data.length === 0){
+      list.innerHTML = '<div class="info-empty">Belum ada kegiatan. Tambahkan lewat form di atas.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    data.forEach(k=>{
+      const div = document.createElement('div');
+      div.className = 'admin-item';
+      div.innerHTML = `
+        <div class="info"><b>${k.nama}</b><span>${formatTanggalAdmin(k.tanggal)}</span></div>
+        <div class="acts">
+          <button class="icon-mini edit" data-id="${k.id}" data-nama="${k.nama}" data-tanggal="${k.tanggal}">✏️</button>
+          <button class="icon-mini del" data-id="${k.id}">🗑️</button>
+        </div>`;
+      list.appendChild(div);
+    });
+
+    list.querySelectorAll('.icon-mini.edit').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.getElementById('admEditId').value = btn.dataset.id;
+        document.getElementById('admNama').value = btn.dataset.nama;
+        document.getElementById('admTanggal').value = btn.dataset.tanggal;
+        document.getElementById('btnSimpanKegiatan').textContent = 'Simpan Perubahan';
+      });
+    });
+    list.querySelectorAll('.icon-mini.del').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        if(!confirm('Hapus kegiatan ini?')) return;
+        await callAPI({ action:"deleteKegiatan", id: btn.dataset.id });
+        loadAllKegiatan();
+      });
+    });
+  }catch(e){
+    list.innerHTML = '<div class="info-empty">Gagal memuat data. Periksa koneksi.</div>';
+  }
+}
+
+document.getElementById('btnSimpanKegiatan').addEventListener('click', async ()=>{
+  const id = document.getElementById('admEditId').value;
+  const nama = document.getElementById('admNama').value.trim();
+  const tanggal = document.getElementById('admTanggal').value;
+  if(!nama || !tanggal){ alert('Mohon isi nama dan tanggal kegiatan.'); return; }
+
+  const btn = document.getElementById('btnSimpanKegiatan');
+  btn.disabled = true;
+  try{
+    if(id){
+      await callAPI({ action:"editKegiatan", id, nama, tanggal });
+    } else {
+      await callAPI({ action:"addKegiatan", nama, tanggal, dibuatOleh: currentUser ? currentUser.nama : "" });
+    }
+    document.getElementById('admEditId').value = '';
+    document.getElementById('admNama').value = '';
+    document.getElementById('admTanggal').value = '';
+    document.getElementById('btnSimpanKegiatan').textContent = 'Tambah Kegiatan';
+    loadAllKegiatan();
+  }catch(e){ alert('Gagal menyimpan kegiatan. Coba lagi.'); }
+  btn.disabled = false;
+});
+
+/* ===================== MULAI ===================== */
+goTo('page-cover');
 </script>
 
 </body>
